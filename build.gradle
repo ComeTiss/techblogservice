@@ -16,9 +16,12 @@ configurations {
 
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 dependencies {
+	compile 'com.graphql-java-kickstart:graphql-spring-boot-starter-test:6.0.0'
+	compile 'com.graphql-java-kickstart:graphql-java-tools:6.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'

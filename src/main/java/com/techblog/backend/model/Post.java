@@ -1,5 +1,6 @@
 package com.techblog.backend.model;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter
     private Long id;
 
     @Getter
@@ -22,7 +24,7 @@ public class Post {
     @Setter
     private String description;
 
-    protected Post() {
+    public Post() {
     }
 
     public Post(String title, String description) {
