@@ -10,7 +10,7 @@ type Query {
 }
 
 type Mutation {
-    createPost(post: Post!) : Post!
+    createPost(title: String, description: String) : Post!
 }
 
 schema {
