@@ -21,9 +21,9 @@ public class PostController {
     public ResponseEntity<Object> postController(@RequestBody String query){
         ExecutionResult executionResult = postService.getGraphQL().execute(query);
 
-      //  if(!executionResult.getErrors().isEmpty()){
-      //      return new ResponseEntity<>(executionResult.getErrors().get(0).getMessage(), HttpStatus.UNAUTHORIZED);
-      //  }
+        if(!executionResult.getErrors().isEmpty()){
+            return new ResponseEntity<>(executionResult.getErrors().get(0).getMessage(), HttpStatus.UNAUTHORIZED);
+        }
 
         return new ResponseEntity<>(executionResult, HttpStatus.OK);
     }

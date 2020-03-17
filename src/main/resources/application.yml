@@ -1,0 +1,18 @@
+server:
+  port: "9090"
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: "org.hibernate.dialect.PostgreSQLDialect"
+        ddl-auto: "none"
+        show-sql: "true"
+
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/blog"
+    username: "postgres"
+    password: "Supercrapule96-"
+    initialization-mode: "always"
+    initialize: "true"
+

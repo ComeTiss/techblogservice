@@ -27,7 +27,6 @@ public class PostService {
     @Value("classpath:post.graphqls")
     private Resource resource;
 
-    @Getter
     private GraphQL graphQL;
 
     @PostConstruct
@@ -44,5 +43,9 @@ public class PostService {
                 .type("Query", type ->
                         type.dataFetcher("getAllPosts", allPostDataFetcher))
                 .build();
+    }
+
+    public GraphQL getGraphQL() {
+        return this.graphQL;
     }
 }
