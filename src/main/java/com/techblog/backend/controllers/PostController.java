@@ -1,6 +1,6 @@
 package com.techblog.backend.controllers;
 
-import com.techblog.backend.service.PostService;
+import com.techblog.backend.service.GraphQLService;
 import graphql.ExecutionResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     @Autowired
-    PostService postService;
+    GraphQLService graphQLService;
 
     public static class Data {
         private String query;
@@ -31,7 +31,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Object> postController(@RequestBody Data query){
-        ExecutionResult executionResult = postService.getGraphQL().execute(query.getQuery());
+        ExecutionResult executionResult = graphQLService.getGraphQL().execute(query.getQuery());
         if(!executionResult.getErrors().isEmpty()){
             return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.UNAUTHORIZED);
         }

@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class PostService {
+public class GraphQLService {
 
     @Autowired
     private AllPostDataFetcher allPostDataFetcher;
