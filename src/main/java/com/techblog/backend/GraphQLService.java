@@ -29,8 +29,9 @@ public class GraphQLService {
 
     @PostConstruct
     private void loadSchema() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:post.graphqls");
-        File schemaFile = resource.getFile();
+        // Resource resource = resourceLoader.getResource("classpath:post.graphqls");
+        File schemaFile = new File("src/main/resources/graphql/post.graphqls");
+
         TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(schemaFile);
         RuntimeWiring wiring = buildRuntimeWiring();
         GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring);
