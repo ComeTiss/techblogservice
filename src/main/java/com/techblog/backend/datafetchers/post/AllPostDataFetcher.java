@@ -23,8 +23,8 @@ public class AllPostDataFetcher implements DataFetcher<List<Post>> {
         try {
             return postRepository.findAll();
         } catch(Exception e) {
-            log.error("Post query failed: " + e.getMessage());
-            return ImmutableList.of();
+            log.error("Post query failed: {}", e);
+            throw e;
         }
     }
 }
