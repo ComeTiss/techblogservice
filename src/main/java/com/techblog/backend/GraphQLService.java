@@ -1,13 +1,14 @@
 package com.techblog.backend;
 
 import com.techblog.backend.datafetchers.post.AllPostDataFetcher;
-import com.techblog.backend.datafetchers.post.CreatePostDataFetcher;
+import com.techblog.backend.datafetchers.post.MutatePostDataFetcher;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,9 @@ import java.io.IOException;
 public class GraphQLService {
 
     @Autowired private AllPostDataFetcher allPostDataFetcher;
-    @Autowired private CreatePostDataFetcher createPostDataFetcher;
+    @Autowired private MutatePostDataFetcher mutatePostDataFetcher;
 
+    @Getter
     private GraphQL graphQL;
 
     @PostConstruct
@@ -37,11 +39,7 @@ public class GraphQLService {
                 .type("Query", type ->
                         type.dataFetcher("getAllPosts", allPostDataFetcher))
                 .type("Mutation", type ->
-                        type.dataFetcher("createPost", createPostDataFetcher))
+                        type.dataFetcher("mutatePost", mutatePostDataFetcher))
                 .build();
-    }
-
-    public GraphQL getGraphQL() {
-        return this.graphQL;
     }
 }

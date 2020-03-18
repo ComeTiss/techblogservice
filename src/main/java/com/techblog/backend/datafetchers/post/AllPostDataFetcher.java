@@ -5,16 +5,14 @@ import com.techblog.backend.model.Post;
 import com.techblog.backend.repository.PostRepository;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
-import org.hibernate.jdbc.Expectation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
 @Component
+@Slf4j
 public class AllPostDataFetcher implements DataFetcher<List<Post>> {
 
     @Autowired
@@ -24,9 +22,9 @@ public class AllPostDataFetcher implements DataFetcher<List<Post>> {
     public List<Post> get(DataFetchingEnvironment environment) {
         try {
             return postRepository.findAll();
-
         } catch(Exception e) {
+            log.error("Post query failed: " + e.getMessage());
             return ImmutableList.of();
         }
-    };
+    }
 }
