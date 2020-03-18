@@ -33,7 +33,7 @@ public class PostController {
     public ResponseEntity<Object> postController(@RequestBody QueryData query){
         ExecutionResult executionResult = graphQLService.getGraphQL().execute(query.getQuery());
         if(!executionResult.getErrors().isEmpty()){
-            return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(executionResult, HttpStatus.OK);
     }
