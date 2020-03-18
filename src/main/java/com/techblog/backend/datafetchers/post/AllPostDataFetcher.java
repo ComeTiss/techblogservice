@@ -1,4 +1,4 @@
-package com.techblog.backend.datafetchers;
+package com.techblog.backend.datafetchers.post;
 
 import com.google.common.collect.ImmutableList;
 import com.techblog.backend.model.Post;
