@@ -17,7 +17,7 @@ public class PostController {
     @Autowired
     GraphQLService graphQLService;
 
-    public static class Data {
+    public static class QueryData {
         private String query;
 
         public String getQuery() {
@@ -30,7 +30,7 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> postController(@RequestBody Data query){
+    public ResponseEntity<Object> postController(@RequestBody QueryData query){
         ExecutionResult executionResult = graphQLService.getGraphQL().execute(query.getQuery());
         if(!executionResult.getErrors().isEmpty()){
             return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.UNAUTHORIZED);
