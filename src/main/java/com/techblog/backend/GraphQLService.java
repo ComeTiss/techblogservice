@@ -9,9 +9,6 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -24,14 +21,11 @@ public class GraphQLService {
     @Autowired private AllPostDataFetcher allPostDataFetcher;
     @Autowired private CreatePostDataFetcher createPostDataFetcher;
 
-    @Autowired private ResourceLoader resourceLoader;
     private GraphQL graphQL;
 
     @PostConstruct
     private void loadSchema() throws IOException {
-        // Resource resource = resourceLoader.getResource("classpath:post.graphqls");
         File schemaFile = new File("src/main/resources/graphql/post.graphqls");
-
         TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(schemaFile);
         RuntimeWiring wiring = buildRuntimeWiring();
         GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring);
