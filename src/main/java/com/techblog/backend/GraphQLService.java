@@ -25,7 +25,7 @@ public class GraphQLService {
     @Autowired
     private CreatePostDataFetcher createPostDataFetcher;
 
-    @Value("classpath:graphql/post.graphqls")
+    @Value("classpath:post.graphqls")
     private Resource resource;
 
     private GraphQL graphQL;
