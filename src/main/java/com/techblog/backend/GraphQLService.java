@@ -1,8 +1,10 @@
 package com.techblog.backend;
 
 import com.techblog.backend.datafetchers.post.AllPostDataFetcher;
+import com.techblog.backend.datafetchers.post.DeletePostDataFetcher;
 import com.techblog.backend.datafetchers.post.MutatePostDataFetcher;
 import graphql.GraphQL;
+import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
@@ -15,12 +17,15 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class GraphQLService {
 
     @Autowired private AllPostDataFetcher allPostDataFetcher;
     @Autowired private MutatePostDataFetcher mutatePostDataFetcher;
+    @Autowired private DeletePostDataFetcher deletePostDataFetcher;
 
     @Getter
     private GraphQL graphQL;
@@ -37,9 +42,22 @@ public class GraphQLService {
     private RuntimeWiring buildRuntimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
                 .type("Query", type ->
-                        type.dataFetcher("getAllPosts", allPostDataFetcher))
+                        type.dataFetchers(queryDataFetchers()))
                 .type("Mutation", type ->
-                        type.dataFetcher("mutatePost", mutatePostDataFetcher))
+                        type.dataFetchers(mutationDataFetchers()))
                 .build();
+    }
+
+    Map<String, DataFetcher> queryDataFetchers() {
+        Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
+        dataFetchersMap.put("getAllPosts", allPostDataFetcher);
+        return dataFetchersMap;
+    }
+
+    Map<String, DataFetcher> mutationDataFetchers() {
+        Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
+        dataFetchersMap.put("mutatePost", mutatePostDataFetcher);
+        dataFetchersMap.put("deletePostsByIds", deletePostDataFetcher);
+        return dataFetchersMap;
     }
 }

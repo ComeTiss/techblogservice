@@ -15,6 +15,7 @@ type Query {
 
 type Mutation {
     mutatePost(title: String!, description: String!, id: String) : Post
+    deletePostsByIds(ids: [ID]!) : [Post]
 }
 
 
