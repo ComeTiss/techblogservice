@@ -1,4 +1,4 @@
-package com.techblog.backend.service;
+package com.techblog.backend;
 
 import com.techblog.backend.datafetchers.AllPostDataFetcher;
 import com.techblog.backend.datafetchers.CreatePostDataFetcher;
@@ -25,7 +25,7 @@ public class GraphQLService {
     @Autowired
     private CreatePostDataFetcher createPostDataFetcher;
 
-    @Value("classpath:post.graphqls")
+    @Value("classpath:graphql/post.graphqls")
     private Resource resource;
 
     private GraphQL graphQL;
