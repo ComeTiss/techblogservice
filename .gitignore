@@ -1,5 +1,5 @@
 
-/src/main/resources/application.yml
+src/main/resources/application.yml
 build/
 .gradle
 out
