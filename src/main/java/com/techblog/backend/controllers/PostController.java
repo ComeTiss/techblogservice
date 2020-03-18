@@ -17,12 +17,23 @@ public class PostController {
     @Autowired
     PostService postService;
 
-    @PostMapping
-    public ResponseEntity<Object> postController(@RequestBody String query){
-        ExecutionResult executionResult = postService.getGraphQL().execute(query);
+    public static class Data {
+        private String query;
 
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String query) {
+            this.query = query;
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<Object> postController(@RequestBody Data query){
+        ExecutionResult executionResult = postService.getGraphQL().execute(query.getQuery());
         if(!executionResult.getErrors().isEmpty()){
-            return new ResponseEntity<>(executionResult.getErrors().get(0).getMessage(), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.UNAUTHORIZED);
         }
 
         return new ResponseEntity<>(executionResult, HttpStatus.OK);
