@@ -31,11 +31,17 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Object> postController(@RequestBody QueryData query){
-        ExecutionResult executionResult = graphQLService.getGraphQL().execute(query.getQuery());
-        if(!executionResult.getErrors().isEmpty()){
-            return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            ExecutionResult executionResult = graphQLService.getGraphQL().execute(query.getQuery());
+            if (!executionResult.getErrors().isEmpty()) {
+                return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>(executionResult, HttpStatus.OK);
         }
-        return new ResponseEntity<>(executionResult, HttpStatus.OK);
+        catch (Exception e) {
+            String errorMessage = "An error occured";
+            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
