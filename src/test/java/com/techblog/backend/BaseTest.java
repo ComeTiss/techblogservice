@@ -1,23 +1,21 @@
 package com.techblog.backend;
 
-import com.techblog.backend.repository.PostRepository;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+@SpringBootTest
+@Transactional
 public class BaseTest {
-
-  @Autowired PostRepository postRepository;
 
   @Before
   public void initialiseDB() {
-    // Start connection && Create tables
-
+    // Do something before each test
   }
 
   @After
   public void clearDB() {
-    // Close connection & Drop tables
-
+    // Do something after each test
   }
 }
