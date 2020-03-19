@@ -1,0 +1,45 @@
+
+version: 2
+jobs:
+  build:
+    parallelism: 1
+    environment:
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+
+    docker:
+      - image: circleci/openjdk:11.0.3-jdk-stretch
+      - image: circleci/postgres:12-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: circle_test
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Run tests in parallel # See: https://circleci.com/docs/2.0/parallelism-faster-jobs/
+          # Use "./gradlew test" instead if tests are not run in parallel
+          command:
+            gradlew spotlessCheck
+            cd src/test/java
+            # Get list of classnames of tests that should run on this node
+            CLASSNAMES=$(circleci tests glob "**/*.java" \
+            | cut -c 1- | sed 's@/@.@g' \
+            | sed 's/.\{5\}$//' \
+            | circleci tests split --split-by=timings --timings-type=classname)
+            cd ../../..
+            # Format the arguments to "./gradlew test"
+            GRADLE_ARGS=$(echo $CLASSNAMES | awk '{for (i=1; i<=NF; i++) print "--tests",$i}')
+            echo "Prepared arguments for Gradle: $GRADLE_ARGS"
+            ./gradlew test $GRADLE_ARGS
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
