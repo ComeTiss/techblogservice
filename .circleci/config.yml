@@ -22,7 +22,7 @@ jobs:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
 
       - run:
-          name: Run tests in parallel
+          name: "Run tests in parallel"
           command:
             gradlew spotlessCheck
             cd src/test/java
