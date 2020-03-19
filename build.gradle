@@ -13,7 +13,7 @@ spotless {
 	java {
 		importOrder 'java', 'javax', 'org', 'com', 'com.diffplug', ''
 		removeUnusedImports()
-		googleJavaFormat('1.4')
+		googleJavaFormat('1.4') // see: https://google.github.io/styleguide/javaguide.html#
 	}
 	format 'gradle', {
 		target '**/*.gradle'
