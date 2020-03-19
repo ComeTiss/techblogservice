@@ -16,8 +16,7 @@ public class MutatePostDataFetcher implements DataFetcher<Post> {
   @Autowired PostRepository postRepository;
 
   /**
-   * Handles a Post mutation operation - If the input contains an ID, the post will be UPDATED -
-   * Else, the post will be CREATED
+   * Handles a Post mutation operation, a Post will be created (if no Id provied), else updated.
    *
    * @param environment, contains query parameters
    * @return Post object mutated
