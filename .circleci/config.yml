@@ -22,10 +22,8 @@ jobs:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      - run:
-        - command: ./gradlew spotlessCheck
-      - run:
-          - command: ./gradlew test
+      - run: ./gradlew spotlessCheck
+      - run: ./gradlew test
 
 workflows:
   version: 2
