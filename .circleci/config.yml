@@ -23,8 +23,6 @@ jobs:
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          - command: ls
-      - run:
         - command: ./gradlew spotlessCheck
       - run:
           - command: ./gradlew test
