@@ -16,18 +16,6 @@ public class PostController {
 
   @Autowired GraphQLService graphQLService;
 
-  public static class QueryData {
-    private String query;
-
-    public String getQuery() {
-      return query;
-    }
-
-    public void setQuery(String query) {
-      this.query = query;
-    }
-  }
-
   @PostMapping
   public ResponseEntity<Object> postController(@RequestBody QueryData query) {
     try {
