@@ -14,4 +14,3 @@ spring:
     password: "Supercrapule96-"
     initialization-mode: "always"
     initialize: "true"
-

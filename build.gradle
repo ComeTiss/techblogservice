@@ -2,11 +2,24 @@ plugins {
 	id 'org.springframework.boot' version '2.2.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id 'com.diffplug.gradle.spotless' version '3.26.0'
 }
 
 group = 'com.techblog'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
+
+spotless {
+	java {
+		importOrder 'java', 'javax', 'org', 'com', 'com.diffplug', ''
+		removeUnusedImports()
+		googleJavaFormat('1.4')
+	}
+	format 'gradle', {
+		target '**/*.gradle'
+		replaceRegex 'blank lines following {', '\\{\\n\\s*\\n+', '{\n'
+	}
+}
 
 configurations {
 	compileOnly {
