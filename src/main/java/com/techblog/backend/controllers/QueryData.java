@@ -1,13 +1,15 @@
 package com.techblog.backend.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+
 public class QueryData {
-  private String query;
+  @Getter @Setter private String query;
+  @Getter @Setter private Map<String, Object> variables;
 
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
+  public QueryData() {
+    this.variables = new HashMap<>();
   }
 }

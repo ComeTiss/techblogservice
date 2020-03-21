@@ -1,6 +1,7 @@
 package com.techblog.backend.controllers;
 
 import com.techblog.backend.GraphQLService;
+import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,14 @@ public class PostController {
   @PostMapping
   public ResponseEntity<Object> postController(@RequestBody QueryData query) {
     try {
-      ExecutionResult executionResult = graphQLService.getGraphQL().execute(query.getQuery());
+      ExecutionInput input =
+          ExecutionInput.newExecutionInput()
+              .query(query.getQuery())
+              .variables(query.getVariables())
+              .build();
+      ExecutionResult executionResult = graphQLService.getGraphQL().execute(input);
       if (!executionResult.getErrors().isEmpty() || !executionResult.isDataPresent()) {
-        return new ResponseEntity<>(
-            executionResult.getErrors().get(0).getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(executionResult.getErrors(), HttpStatus.BAD_REQUEST);
       }
       return new ResponseEntity<>(executionResult, HttpStatus.OK);
     } catch (Exception e) {

@@ -46,5 +46,5 @@ public class MutatePostDataFetcher implements DataFetcher<Post> {
       log.error("Post mutation failed: {}", e);
       throw e;
     }
-  };
+  }
 }
