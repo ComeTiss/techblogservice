@@ -164,7 +164,7 @@ public class DataFetchingEnvironmentMock implements DataFetchingEnvironment {
   }
 
   @Override
-  public Object getArgument(String name) {
-    return this.arguments.get(name);
+  public <T> T getArgument(String name) {
+    return (T) this.arguments.get(name);
   }
 }

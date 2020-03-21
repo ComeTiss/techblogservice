@@ -5,6 +5,7 @@ import com.techblog.backend.repository.PostRepository;
 import graphql.GraphQLException;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class MutatePostDataFetcher implements DataFetcher<Post> {
         Post currentPost = postRepository.getOne(Long.valueOf(postDataMap.get("id").toString()));
         currentPost.setDescription(description);
         currentPost.setTitle(title);
+        currentPost.setUpdatedAt(Instant.now());
         return postRepository.save(currentPost);
       } else {
         return postRepository.save(new Post(title, description));

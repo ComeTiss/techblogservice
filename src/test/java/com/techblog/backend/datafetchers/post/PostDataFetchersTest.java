@@ -6,6 +6,7 @@ import com.techblog.backend.BaseTest;
 import com.techblog.backend.model.Post;
 import com.techblog.backend.repository.PostRepository;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ public class PostDataFetchersTest extends BaseTest {
     assertThat(posts.size()).isEqualTo(1);
     assertThat(posts.get(0).getTitle()).isEqualTo(TEST_TITLE);
     assertThat(posts.get(0).getDescription()).isEqualTo(TEST_DESCRIPTION);
+    assertThat(posts.get(0).getUpdatedAt()).isNull();
   }
 
   @Test
@@ -34,13 +36,16 @@ public class PostDataFetchersTest extends BaseTest {
     Post postCreated = createPost();
     assertThat(postRepository.findAll().size()).isEqualTo(1);
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = initQueryArguments();
-    dataFetchingEnvironmentMock.putArgument("id", postCreated.getId().toString());
+    dataFetchingEnvironmentMock =
+        updatePostInputMock(dataFetchingEnvironmentMock, "id", postCreated.getId().toString());
     mutatePostDataFetcher.get(dataFetchingEnvironmentMock);
     List<Post> posts = postRepository.findAll();
     assertThat(posts.size()).isEqualTo(1);
     assertThat(posts.get(0).getDescription()).isEqualTo(TEST_DESCRIPTION);
+    assertThat(posts.get(0).getUpdatedAt()).isNotNull();
 
-    dataFetchingEnvironmentMock.putArgument("description", TEST_DESCRIPTION2);
+    dataFetchingEnvironmentMock =
+        updatePostInputMock(dataFetchingEnvironmentMock, "description", TEST_DESCRIPTION2);
     mutatePostDataFetcher.get(dataFetchingEnvironmentMock);
     List<Post> postsUpdated = postRepository.findAll();
     assertThat(postsUpdated.size()).isEqualTo(1);
@@ -61,9 +66,22 @@ public class PostDataFetchersTest extends BaseTest {
   private DataFetchingEnvironmentMock initQueryArguments() {
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
     Map<String, Object> arguments = new HashMap<>();
-    arguments.put("title", TEST_TITLE);
-    arguments.put("description", TEST_DESCRIPTION);
+    LinkedHashMap<String, Object> post = new LinkedHashMap<>();
+    post.put("title", TEST_TITLE);
+    post.put("description", TEST_DESCRIPTION);
+    arguments.put("post", post);
     dataFetchingEnvironmentMock.setArguments(arguments);
     return dataFetchingEnvironmentMock;
+  }
+
+  private DataFetchingEnvironmentMock updatePostInputMock(
+      DataFetchingEnvironmentMock inputMock, String field, Object value) {
+    LinkedHashMap postInput = inputMock.getArgument("post");
+    postInput.put(field, value);
+    HashMap<String, Object> arguments = new HashMap<>();
+    arguments.put("post", postInput);
+    DataFetchingEnvironmentMock updatedInputMock = new DataFetchingEnvironmentMock();
+    updatedInputMock.setArguments(arguments);
+    return updatedInputMock;
   }
 }
