@@ -1,4 +1,4 @@
-package com.techblog.backend.datafetchers.post;
+package com.techblog.backend.datafetchers;
 
 import graphql.cachecontrol.CacheControl;
 import graphql.execution.ExecutionId;

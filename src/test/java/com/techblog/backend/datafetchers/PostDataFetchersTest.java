@@ -1,7 +1,8 @@
-package com.techblog.backend.datafetchers.post;
+package com.techblog.backend.datafetchers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableList;
 import com.techblog.backend.BaseTest;
 import com.techblog.backend.model.Post;
 import com.techblog.backend.repository.PostRepository;
@@ -14,8 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PostDataFetchersTest extends BaseTest {
   @Autowired PostRepository postRepository;
-  @Autowired MutatePostDataFetcher mutatePostDataFetcher;
-  @Autowired AllPostDataFetcher allPostDataFetcher;
+  @Autowired PostDataFetcher postDataFetcher;
 
   private final String TEST_DESCRIPTION = "POST DESCRIPTION";
   private final String TEST_DESCRIPTION2 = "POST DESCRIPTION_2";
@@ -38,7 +38,7 @@ public class PostDataFetchersTest extends BaseTest {
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = initQueryArguments();
     dataFetchingEnvironmentMock =
         updatePostInputMock(dataFetchingEnvironmentMock, "id", postCreated.getId().toString());
-    mutatePostDataFetcher.get(dataFetchingEnvironmentMock);
+    postDataFetcher.mutatePost(dataFetchingEnvironmentMock);
     List<Post> posts = postRepository.findAll();
     assertThat(posts.size()).isEqualTo(1);
     assertThat(posts.get(0).getDescription()).isEqualTo(TEST_DESCRIPTION);
@@ -46,7 +46,7 @@ public class PostDataFetchersTest extends BaseTest {
 
     dataFetchingEnvironmentMock =
         updatePostInputMock(dataFetchingEnvironmentMock, "description", TEST_DESCRIPTION2);
-    mutatePostDataFetcher.get(dataFetchingEnvironmentMock);
+    postDataFetcher.mutatePost(dataFetchingEnvironmentMock);
     List<Post> postsUpdated = postRepository.findAll();
     assertThat(postsUpdated.size()).isEqualTo(1);
     assertThat(postsUpdated.get(0).getDescription()).isEqualTo(TEST_DESCRIPTION2);
@@ -56,11 +56,23 @@ public class PostDataFetchersTest extends BaseTest {
   public void testFetchAllPost() {
     createPost();
     createPost();
-    assertThat(allPostDataFetcher.get(null).size()).isEqualTo(2);
+    assertThat(postDataFetcher.getAllPosts(null).size()).isEqualTo(2);
+  }
+
+  @Test
+  public void testDeletePostsByIds() {
+    Post postCreated = createPost();
+    assertThat(postDataFetcher.getAllPosts(null).size()).isEqualTo(1);
+    DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
+    HashMap<String, Object> arguments = new HashMap<>();
+    arguments.put("ids", ImmutableList.of(postCreated.getId().toString()));
+    dataFetchingEnvironmentMock.setArguments(arguments);
+    postDataFetcher.deletePostByIds(dataFetchingEnvironmentMock);
+    assertThat(postDataFetcher.getAllPosts(null).size()).isEqualTo(0);
   }
 
   private Post createPost() {
-    return mutatePostDataFetcher.get(initQueryArguments());
+    return postDataFetcher.mutatePost(initQueryArguments());
   }
 
   private DataFetchingEnvironmentMock initQueryArguments() {

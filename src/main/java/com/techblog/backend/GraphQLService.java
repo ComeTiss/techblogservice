@@ -1,8 +1,6 @@
 package com.techblog.backend;
 
-import com.techblog.backend.datafetchers.post.AllPostDataFetcher;
-import com.techblog.backend.datafetchers.post.DeletePostDataFetcher;
-import com.techblog.backend.datafetchers.post.MutatePostDataFetcher;
+import com.techblog.backend.datafetchers.PostDataFetcher;
 import graphql.GraphQL;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLSchema;
@@ -22,9 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GraphQLService {
 
-  @Autowired private AllPostDataFetcher allPostDataFetcher;
-  @Autowired private MutatePostDataFetcher mutatePostDataFetcher;
-  @Autowired private DeletePostDataFetcher deletePostDataFetcher;
+  @Autowired private PostDataFetcher postDataFetcher;
 
   @Getter private GraphQL graphQL;
 
@@ -46,14 +42,14 @@ public class GraphQLService {
 
   private Map<String, DataFetcher> queryDataFetchers() {
     Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
-    dataFetchersMap.put("getAllPosts", allPostDataFetcher);
+    dataFetchersMap.put("getAllPosts", postDataFetcher::getAllPosts);
     return dataFetchersMap;
   }
 
   private Map<String, DataFetcher> mutationDataFetchers() {
     Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
-    dataFetchersMap.put("mutatePost", mutatePostDataFetcher);
-    dataFetchersMap.put("deletePostsByIds", deletePostDataFetcher);
+    dataFetchersMap.put("mutatePost", postDataFetcher::mutatePost);
+    dataFetchersMap.put("deletePostsByIds", postDataFetcher::deletePostByIds);
     return dataFetchersMap;
   }
 }
