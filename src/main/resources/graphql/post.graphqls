@@ -3,12 +3,16 @@ schema {
     mutation: Mutation
 }
 
-input PostInput {
-    id: String
-    title: String!
-    description: String!
+type Query {
+    getAllPosts: PostsResponse!
 }
 
+type Mutation {
+    mutatePost(request: MutatePostRequest!) : MutatePostResponse!
+    deletePostsByIds(ids: [ID]!) : PostsResponse!
+}
+
+#### Data ####
 type Post {
     id: ID!
     title: String!
@@ -17,14 +21,24 @@ type Post {
     updatedAt: String
 }
 
-type Query {
-    getAllPosts: [Post]!
+#### Request ####
+input MutatePostRequest {
+    id: String
+    title: String!
+    description: String!
 }
 
-type Mutation {
-    mutatePost(post: PostInput!) : Post
-    deletePostsByIds(ids: [ID]!) : [Post]
+#### Response ####
+type PostsResponse {
+    success: Boolean
+    error: String
+    posts: [Post]!
 }
 
+type MutatePostResponse {
+    success: Boolean
+    error: String
+    post: Post
+}
 
 

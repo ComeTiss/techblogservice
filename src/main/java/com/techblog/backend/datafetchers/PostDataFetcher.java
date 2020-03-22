@@ -1,9 +1,10 @@
 package com.techblog.backend.datafetchers;
 
-import com.google.common.collect.ImmutableList;
 import com.techblog.backend.model.Post;
 import com.techblog.backend.repository.PostRepository;
-import graphql.GraphQLException;
+import com.techblog.backend.types.MutatePostResponse;
+import com.techblog.backend.types.PostResponse;
+import com.techblog.backend.types.ServiceError;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import java.time.Instant;
@@ -20,13 +21,16 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
 
   @Autowired PostRepository postRepository;
 
-  public List<Post> getAllPosts(DataFetchingEnvironment environment) {
+  public PostResponse getAllPosts(DataFetchingEnvironment environment) {
+    PostResponse response = new PostResponse();
     try {
-      return postRepository.findAll();
+      response.setPosts(postRepository.findAll());
+      response.setSuccess(true);
     } catch (Exception e) {
       log.error("Post query failed: {}", e);
-      throw e;
+      response.setError(e.getMessage());
     }
+    return response;
   }
 
   /**
@@ -35,45 +39,53 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
    * @param environment, contains query parameters
    * @return Post object mutated
    */
-  public Post mutatePost(DataFetchingEnvironment environment) {
-    LinkedHashMap postDataMap = environment.getArgument("post");
-    String title = postDataMap.get("title").toString();
-    String description = postDataMap.get("description").toString();
+  public MutatePostResponse mutatePost(DataFetchingEnvironment environment) {
+    LinkedHashMap requestData = environment.getArgument("request");
+    String title = requestData.get("title").toString();
+    String description = requestData.get("description").toString();
+    MutatePostResponse response = new MutatePostResponse();
 
     if (title.isEmpty() || description.isEmpty()) {
-      throw new GraphQLException("Post title/description cannot be empty");
+      response.setError(new ServiceError("Post title/description cannot be empty").getMessage());
+      return response;
     }
     try {
-      if (postDataMap.get("id") != null) {
-        Post currentPost = postRepository.getOne(Long.valueOf(postDataMap.get("id").toString()));
+      if (requestData.get("id") != null) {
+        Post currentPost = postRepository.getOne(Long.valueOf(requestData.get("id").toString()));
         currentPost.setDescription(description);
         currentPost.setTitle(title);
         currentPost.setUpdatedAt(Instant.now());
-        return postRepository.save(currentPost);
+        response.setPost(postRepository.save(currentPost));
       } else {
-        return postRepository.save(new Post(title, description));
+        response.setPost(postRepository.save(new Post(title, description)));
       }
+      response.setSuccess(true);
     } catch (Exception e) {
       log.error("Post mutation failed: {}", e);
-      throw e;
+      response.setError(new ServiceError(e.getMessage()).getMessage());
     }
+    return response;
   }
 
-  public List<Post> deletePostByIds(DataFetchingEnvironment environment) {
+  public PostResponse deletePostByIds(DataFetchingEnvironment environment) {
     List<String> requestIds = environment.getArgument("ids");
     List<Long> postIds = requestIds.stream().map(Long::valueOf).collect(Collectors.toList());
-
+    PostResponse response = new PostResponse();
     try {
       List<Post> postsToDelete = postRepository.findAllById(postIds);
       if (postsToDelete.isEmpty()) {
-        return ImmutableList.of();
+        response.setSuccess(true);
+        response.setError(new ServiceError("entity ID doesn't match any record").getMessage());
+        return response;
       }
       postRepository.deleteInBatch(postsToDelete);
-      return postsToDelete;
+      response.setSuccess(true);
+      response.setPosts(postsToDelete);
     } catch (Exception e) {
       log.error("Post mutation failed: {}", e);
-      throw e;
+      response.setError(e.getMessage());
     }
+    return response;
   };
 
   @Override
