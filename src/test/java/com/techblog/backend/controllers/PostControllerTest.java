@@ -3,11 +3,11 @@ package com.techblog.backend.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.techblog.backend.BaseTest;
+import com.techblog.backend.types.BaseResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 public class PostControllerTest extends BaseTest {
@@ -24,8 +24,8 @@ public class PostControllerTest extends BaseTest {
             + "      description\n"
             + "    }\n"
             + "  }");
-    ResponseEntity response = postController.postController(query);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    BaseResponse response = postController.postController(query);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
   }
 
   @Test
@@ -39,8 +39,8 @@ public class PostControllerTest extends BaseTest {
             + "      description\n"
             + "    }\n"
             + "  }");
-    ResponseEntity response = postController.postController(query);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    BaseResponse response = postController.postController(query);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
   }
 
   @Test
@@ -54,7 +54,7 @@ public class PostControllerTest extends BaseTest {
             + "    description\n"
             + "  }\n"
             + "}");
-    ResponseEntity response = postController.postController(query);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    BaseResponse response = postController.postController(query);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
   }
 }

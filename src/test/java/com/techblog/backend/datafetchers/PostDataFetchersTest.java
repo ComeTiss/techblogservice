@@ -56,23 +56,23 @@ public class PostDataFetchersTest extends BaseTest {
   public void testFetchAllPost() {
     createPost();
     createPost();
-    assertThat(postDataFetcher.getAllPosts(null).size()).isEqualTo(2);
+    assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(2);
   }
 
   @Test
   public void testDeletePostsByIds() {
     Post postCreated = createPost();
-    assertThat(postDataFetcher.getAllPosts(null).size()).isEqualTo(1);
+    assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(1);
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("ids", ImmutableList.of(postCreated.getId().toString()));
     dataFetchingEnvironmentMock.setArguments(arguments);
     postDataFetcher.deletePostByIds(dataFetchingEnvironmentMock);
-    assertThat(postDataFetcher.getAllPosts(null).size()).isEqualTo(0);
+    assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(0);
   }
 
   private Post createPost() {
-    return postDataFetcher.mutatePost(initQueryArguments());
+    return postDataFetcher.mutatePost(initQueryArguments()).getPost();
   }
 
   private DataFetchingEnvironmentMock initQueryArguments() {
@@ -81,17 +81,17 @@ public class PostDataFetchersTest extends BaseTest {
     LinkedHashMap<String, Object> post = new LinkedHashMap<>();
     post.put("title", TEST_TITLE);
     post.put("description", TEST_DESCRIPTION);
-    arguments.put("post", post);
+    arguments.put("request", post);
     dataFetchingEnvironmentMock.setArguments(arguments);
     return dataFetchingEnvironmentMock;
   }
 
   private DataFetchingEnvironmentMock updatePostInputMock(
       DataFetchingEnvironmentMock inputMock, String field, Object value) {
-    LinkedHashMap postInput = inputMock.getArgument("post");
+    LinkedHashMap postInput = inputMock.getArgument("request");
     postInput.put(field, value);
     HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("post", postInput);
+    arguments.put("request", postInput);
     DataFetchingEnvironmentMock updatedInputMock = new DataFetchingEnvironmentMock();
     updatedInputMock.setArguments(arguments);
     return updatedInputMock;
