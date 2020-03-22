@@ -17,18 +17,18 @@ public class PostControllerTest extends BaseTest {
   public void testCreatePost() {
     QueryData query = new QueryData();
     query.setQuery(
-        "mutation {\n" +
-                " mutatePost(request: { title: \"...\", description: \"...\" }) {\n" +
-                "    post {\n" +
-                "      id\n" +
-                "      title\n" +
-                "      createdAt\n" +
-                "      updatedAt\n" +
-                "    }\n" +
-                "    error\n" +
-                "    success\n" +
-                "  }\n" +
-                "}");
+        "mutation {\n"
+            + " mutatePost(request: { title: \"...\", description: \"...\" }) {\n"
+            + "    post {\n"
+            + "      id\n"
+            + "      title\n"
+            + "      createdAt\n"
+            + "      updatedAt\n"
+            + "    }\n"
+            + "    error\n"
+            + "    success\n"
+            + "  }\n"
+            + "}");
     BaseResponse response = postController.postController(query);
     assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
   }
@@ -37,17 +37,17 @@ public class PostControllerTest extends BaseTest {
   public void testUpdatePost() {
     QueryData query = new QueryData();
     query.setQuery(
-        "mutation {\n" +
-                "    deletePostsByIds(ids: [60]) {\n" +
-                "      success\n" +
-                "      error\n" +
-                "      posts {\n" +
-                "        id\n" +
-                "        title\n" +
-                "        description\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }");
+        "mutation {\n"
+            + "    deletePostsByIds(ids: [60]) {\n"
+            + "      success\n"
+            + "      error\n"
+            + "      posts {\n"
+            + "        id\n"
+            + "        title\n"
+            + "        description\n"
+            + "      }\n"
+            + "    }\n"
+            + "  }");
     BaseResponse response = postController.postController(query);
     System.out.println(response.getData());
     assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -57,17 +57,17 @@ public class PostControllerTest extends BaseTest {
   public void testFetchAllPost() {
     QueryData query = new QueryData();
     query.setQuery(
-        "{\n" +
-                "  getAllPosts {\n" +
-                "    success\n" +
-                "    error\n" +
-                "    posts {\n" +
-                "      id\n" +
-                "      title\n" +
-                "      description\n" +
-                "    }\n" +
-                "  }\n" +
-                "}");
+        "{\n"
+            + "  getAllPosts {\n"
+            + "    success\n"
+            + "    error\n"
+            + "    posts {\n"
+            + "      id\n"
+            + "      title\n"
+            + "      description\n"
+            + "    }\n"
+            + "  }\n"
+            + "}");
     BaseResponse response = postController.postController(query);
     assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
   }
