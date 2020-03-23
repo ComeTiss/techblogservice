@@ -3,6 +3,7 @@ package com.techblog.backend.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.techblog.backend.BaseTest;
+import com.techblog.backend.types.BaseRequestData;
 import com.techblog.backend.types.BaseResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class PostControllerTest extends BaseTest {
 
   @Test
   public void testCreatePost() {
-    QueryData query = new QueryData();
+    BaseRequestData query = new BaseRequestData();
     query.setQuery(
         "mutation {\n"
             + " mutatePost(request: { title: \"...\", description: \"...\" }) {\n"
@@ -35,7 +36,7 @@ public class PostControllerTest extends BaseTest {
 
   @Test
   public void testUpdatePost() {
-    QueryData query = new QueryData();
+    BaseRequestData query = new BaseRequestData();
     query.setQuery(
         "mutation {\n"
             + "    deletePostsByIds(ids: [60]) {\n"
@@ -54,7 +55,7 @@ public class PostControllerTest extends BaseTest {
 
   @Test
   public void testFetchAllPost() {
-    QueryData query = new QueryData();
+    BaseRequestData query = new BaseRequestData();
     query.setQuery(
         "{\n"
             + "  getAllPosts {\n"
