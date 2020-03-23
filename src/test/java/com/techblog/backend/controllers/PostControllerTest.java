@@ -30,7 +30,7 @@ public class PostControllerTest extends BaseTest {
             + "  }\n"
             + "}");
     BaseResponse response = postController.postController(query);
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -49,8 +49,7 @@ public class PostControllerTest extends BaseTest {
             + "    }\n"
             + "  }");
     BaseResponse response = postController.postController(query);
-    System.out.println(response.getData());
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -69,6 +68,6 @@ public class PostControllerTest extends BaseTest {
             + "  }\n"
             + "}");
     BaseResponse response = postController.postController(query);
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }

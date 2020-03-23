@@ -29,14 +29,14 @@ public class PostController {
       ExecutionResult executionResult = graphQLService.getGraphQL().execute(input);
       if (!executionResult.getErrors().isEmpty() || !executionResult.isDataPresent()) {
         return new BaseResponse(
-            HttpStatus.BAD_REQUEST.value(),
-            new ServiceError(executionResult.getErrors().get(0).getMessage()));
+            new ServiceError(executionResult.getErrors().get(0).getMessage()),
+            HttpStatus.BAD_REQUEST);
       }
-      return new BaseResponse(HttpStatus.OK.value(), executionResult.getData());
+      return new BaseResponse(executionResult.getData(), HttpStatus.OK);
     } catch (Exception e) {
       log.error(e.getMessage());
       return new BaseResponse(
-          HttpStatus.INTERNAL_SERVER_ERROR.value(), new ServiceError("An error occurred"));
+          new ServiceError("An error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

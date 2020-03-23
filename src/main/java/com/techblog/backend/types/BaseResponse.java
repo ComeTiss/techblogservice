@@ -1,11 +1,11 @@
 package com.techblog.backend.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-@AllArgsConstructor
-public class BaseResponse {
-  @Getter @Setter private int status;
-  @Getter @Setter private Object data;
+public class BaseResponse extends ResponseEntity {
+
+  public BaseResponse(Object data, HttpStatus status) {
+    super(data, status);
+  }
 }
