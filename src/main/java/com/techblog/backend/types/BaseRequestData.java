@@ -1,15 +1,15 @@
-package com.techblog.backend.controllers;
+package com.techblog.backend.types;
 
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 
-public class QueryData {
+public class BaseRequestData {
   @Getter @Setter private String query;
   @Getter @Setter private Map<String, Object> variables;
 
-  public QueryData() {
+  public BaseRequestData() {
     this.variables = new HashMap<>();
   }
 }

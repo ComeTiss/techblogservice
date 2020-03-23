@@ -1,7 +1,9 @@
 package com.techblog.backend.controllers;
 
 import com.techblog.backend.GraphQLService;
+import com.techblog.backend.types.BaseRequestData;
 import com.techblog.backend.types.BaseResponse;
+import com.techblog.backend.types.BaseResponseData;
 import com.techblog.backend.types.ServiceError;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
@@ -19,7 +21,7 @@ public class PostController {
   @Autowired GraphQLService graphQLService;
 
   @PostMapping
-  public BaseResponse postController(@RequestBody QueryData query) {
+  public BaseResponse postController(@RequestBody BaseRequestData query) {
     try {
       ExecutionInput input =
           ExecutionInput.newExecutionInput()
@@ -32,7 +34,7 @@ public class PostController {
             new ServiceError(executionResult.getErrors().get(0).getMessage()),
             HttpStatus.BAD_REQUEST);
       }
-      return new BaseResponse(executionResult.getData(), HttpStatus.OK);
+      return new BaseResponse(new BaseResponseData(executionResult.getData()), HttpStatus.OK);
     } catch (Exception e) {
       log.error(e.getMessage());
       return new BaseResponse(
