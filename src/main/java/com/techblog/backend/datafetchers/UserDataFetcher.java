@@ -34,8 +34,9 @@ public class UserDataFetcher implements DataFetcher<User> {
       Object authProvider = requestData.get("authProvider");
       Object password = requestData.get("password");
 
+      // TODO: add password validation rules
       if ((authProvider == null && password == null)
-          || (authProvider != null && authProvider.toString().isEmpty())) {
+          || (password != null && password.toString().isEmpty())) {
         response.setError(
             new ServiceError("Must provide a valid password/Auth provider").getMessage());
         return response;
