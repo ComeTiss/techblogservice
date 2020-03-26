@@ -57,7 +57,8 @@ public class GraphQLService {
     Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
     dataFetchersMap.put("mutatePost", postDataFetcher::mutatePost);
     dataFetchersMap.put("deletePostsByIds", postDataFetcher::deletePostByIds);
-    dataFetchersMap.put("authenticate", userDataFetcher::authenticateUser);
+    dataFetchersMap.put("signup", userDataFetcher::signUp);
+    dataFetchersMap.put("login", userDataFetcher::login);
     return dataFetchersMap;
   }
 }

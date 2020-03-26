@@ -1,6 +1,7 @@
 package com.techblog.backend.datafetchers;
 
 import com.techblog.backend.authentication.JwtGenerator;
+import com.techblog.backend.authentication.PasswordUtils;
 import com.techblog.backend.model.User;
 import com.techblog.backend.repository.UserRepository;
 import com.techblog.backend.types.error.ServiceError;
@@ -19,14 +20,33 @@ public class UserDataFetcher implements DataFetcher<User> {
 
   @Autowired UserRepository userRepository;
   @Autowired JwtGenerator jwtGenerator;
+  @Autowired PasswordUtils passwordUtils;
 
-  /* GET USER BY EMAIL */
+  // TODO: add password validation rules
+  public AuthenticationResponse signUp(DataFetchingEnvironment environment) {
+    AuthenticationResponse response = new AuthenticationResponse();
+    try {
+      LinkedHashMap requestData = environment.getArgument("request");
+      String email = requestData.get("email").toString();
+      Object password = requestData.get("password");
 
-  /* DELETE USER BY EMAIL */
+      User existingUser = userRepository.getOneByEmail(email);
+      if (existingUser != null) {
+        response.setError(new ServiceError("This email is already used.").getMessage());
+        return response;
+      } else {
+        User newUser = new User(email, passwordUtils.encode(password.toString()));
+        response.setUser(userRepository.save(newUser));
+        response.setToken(jwtGenerator.generate(newUser));
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      response.setError(new ServiceError(e.getMessage()).getMessage());
+    }
+    return response;
+  }
 
-  /* UPDATE USER BY EMAIL */
-
-  public AuthenticationResponse authenticateUser(DataFetchingEnvironment environment) {
+  public AuthenticationResponse login(DataFetchingEnvironment environment) {
     AuthenticationResponse response = new AuthenticationResponse();
     try {
       LinkedHashMap requestData = environment.getArgument("request");
@@ -34,36 +54,36 @@ public class UserDataFetcher implements DataFetcher<User> {
       Object authProvider = requestData.get("authProvider");
       Object password = requestData.get("password");
 
-      // TODO: add password validation rules
-      if ((authProvider == null && password == null)
-          || (password != null && password.toString().isEmpty())) {
+      if ((authProvider == null && password == null)) {
         response.setError(
             new ServiceError("Must provide a valid password/Auth provider").getMessage());
         return response;
       }
-
       User existingUser = userRepository.getOneByEmail(email);
-      if (existingUser != null) {
-        response.setUser(existingUser);
-        if (existingUser.getAuthProvider() == null) {
-          String token = jwtGenerator.generate(existingUser);
-          response.setToken(token);
-        }
-      } else {
-        User newUser;
+      if (existingUser == null) {
         if (authProvider != null) {
-          newUser = new User(email, AuthProvider.valueOf(authProvider.toString()));
-          // TODO: handle token
-        } else {
-          // TODO: encrypt password
-          newUser = new User(email, password.toString());
-          String token = jwtGenerator.generate(newUser);
-          response.setToken(token);
+          User newUser =
+              userRepository.save(new User(email, AuthProvider.valueOf(authProvider.toString())));
+          response.setUser(newUser);
+          // handle Facebook/Google token
+          return response;
         }
-        response.setUser(userRepository.save(newUser));
+        response.setError(new ServiceError("Invalid email provided.").getMessage());
+        return response;
       }
+      if (authProvider != null) {
+        // handle Facebook/Google token
+        response.setUser(existingUser);
+        return response;
+      }
+      if (!passwordUtils.isValid(password.toString(), existingUser.getPassword())) {
+        response.setError(new ServiceError("Invalid password provided.").getMessage());
+        return response;
+      }
+      response.setToken(jwtGenerator.generate(existingUser));
+      response.setUser(existingUser);
     } catch (Exception e) {
-      log.error(e.getMessage());
+      log.error(String.valueOf(e));
       response.setError(new ServiceError(e.getMessage()).getMessage());
     }
     return response;
