@@ -3,8 +3,8 @@ package com.techblog.backend.controllers;
 import com.techblog.backend.GraphQLService;
 import com.techblog.backend.types.BaseRequestData;
 import com.techblog.backend.types.BaseResponse;
-import com.techblog.backend.types.BaseResponseData;
-import com.techblog.backend.types.ServiceError;
+import com.techblog.backend.types.error.ServiceError;
+import com.techblog.backend.types.post.BaseResponseData;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import lombok.extern.slf4j.Slf4j;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController()
-@RequestMapping("/posts")
+@RequestMapping("/graphql")
 @Slf4j
-public class PostController {
+public class GraphQLController {
 
   @Autowired GraphQLService graphQLService;
 
   @PostMapping
-  public BaseResponse postController(@RequestBody BaseRequestData query) {
+  public BaseResponse handleRequest(@RequestBody BaseRequestData query) {
     try {
       ExecutionInput input =
           ExecutionInput.newExecutionInput()

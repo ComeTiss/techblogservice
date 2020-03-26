@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest
-public class PostControllerTest extends BaseTest {
-  @Autowired private PostController postController;
+public class GraphQLControllerTest extends BaseTest {
+  @Autowired private GraphQLController graphQLController;
 
   @Test
   public void testCreatePost() {
@@ -30,7 +30,7 @@ public class PostControllerTest extends BaseTest {
             + "    success\n"
             + "  }\n"
             + "}");
-    BaseResponse response = postController.postController(query);
+    BaseResponse response = graphQLController.handleRequest(query);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
@@ -49,7 +49,7 @@ public class PostControllerTest extends BaseTest {
             + "      }\n"
             + "    }\n"
             + "  }");
-    BaseResponse response = postController.postController(query);
+    BaseResponse response = graphQLController.handleRequest(query);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
@@ -68,7 +68,7 @@ public class PostControllerTest extends BaseTest {
             + "    }\n"
             + "  }\n"
             + "}");
-    BaseResponse response = postController.postController(query);
+    BaseResponse response = graphQLController.handleRequest(query);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }

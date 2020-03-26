@@ -1,4 +1,4 @@
-package com.techblog.backend.types;
+package com.techblog.backend.types.post;
 
 import com.techblog.backend.model.Post;
 import java.util.ArrayList;
