@@ -19,7 +19,7 @@ public class UserGraphQLControllerTest extends BaseTest {
     BaseRequestData query = new BaseRequestData();
     query.setQuery(
         "mutation {\n"
-            + "  authenticate(request: {email: \"test2@gmail.com\", authProvider: FACEBOOK}) {\n"
+            + "  login(request: {email: \"test2@gmail.com\", authProvider: FACEBOOK}) {\n"
             + "    user {\n"
             + "      id\n"
             + "      email\n"

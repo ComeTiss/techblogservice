@@ -2,7 +2,8 @@
 # extend type Query {}
 
 extend type Mutation {
-    authenticate(request: AuthenticationRequest!) : AuthenticationResponse!
+    signup(request: SignUpRequest!) : AuthenticationResponse!
+    login(request: LoginRequest!) : AuthenticationResponse!
 }
 
 #### Data ####
@@ -13,16 +14,18 @@ enum AuthProvider {
 
 type User {
     id: ID!
-    fullName: String
     email: String!
     authProvider: AuthProvider
 }
 
 #### Request ####
 
-input AuthenticationRequest {
-    id: String
-    fullName: String
+input SignUpRequest {
+    email: String!
+    password: String!
+}
+
+input LoginRequest {
     email: String!
     password: String
     authProvider: AuthProvider
