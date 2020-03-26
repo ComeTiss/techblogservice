@@ -1,4 +1,4 @@
-package com.techblog.backend.types;
+package com.techblog.backend.types.post;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

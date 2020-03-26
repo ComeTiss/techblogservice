@@ -1,0 +1,40 @@
+
+# extend type Query {}
+
+extend type Mutation {
+    authenticate(request: AuthenticationRequest!) : AuthenticationResponse!
+}
+
+#### Data ####
+enum AuthProvider {
+    FACEBOOK
+    GOOGLE
+}
+
+type User {
+    id: ID!
+    fullName: String
+    email: String!
+    authProvider: AuthProvider
+}
+
+#### Request ####
+
+input AuthenticationRequest {
+    id: String
+    fullName: String
+    email: String!
+    password: String
+    authProvider: AuthProvider
+}
+
+#### Response ####
+
+type AuthenticationResponse {
+    error: String
+    user: User
+    token: String
+}
+
+
+

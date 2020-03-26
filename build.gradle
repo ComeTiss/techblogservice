@@ -35,8 +35,10 @@ repositories {
 dependencies {
 	compile 'com.graphql-java-kickstart:graphql-spring-boot-starter-test:6.0.0'
 	compile 'com.graphql-java-kickstart:graphql-java-tools:6.0.0'
+	compile "org.springframework.boot:spring-boot-starter-security"
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation('io.jsonwebtoken:jjwt:0.2')
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'

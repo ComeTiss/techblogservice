@@ -1,6 +1,7 @@
 package com.techblog.backend;
 
 import com.techblog.backend.datafetchers.PostDataFetcher;
+import com.techblog.backend.datafetchers.UserDataFetcher;
 import graphql.GraphQL;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLSchema;
@@ -21,13 +22,19 @@ import org.springframework.stereotype.Service;
 public class GraphQLService {
 
   @Autowired private PostDataFetcher postDataFetcher;
+  @Autowired private UserDataFetcher userDataFetcher;
 
   @Getter private GraphQL graphQL;
 
   @PostConstruct
   private void loadSchema() throws IOException {
     File schemaFile = new File("src/main/resources/graphql/post.graphqls");
-    TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(schemaFile);
+    File schemaFile2 = new File("src/main/resources/graphql/user.graphqls");
+    SchemaParser schemaParser = new SchemaParser();
+    TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
+    typeRegistry.merge(schemaParser.parse(schemaFile));
+    typeRegistry.merge(schemaParser.parse(schemaFile2));
+
     RuntimeWiring wiring = buildRuntimeWiring();
     GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring);
     this.graphQL = GraphQL.newGraphQL(schema).build();
@@ -50,6 +57,7 @@ public class GraphQLService {
     Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
     dataFetchersMap.put("mutatePost", postDataFetcher::mutatePost);
     dataFetchersMap.put("deletePostsByIds", postDataFetcher::deletePostByIds);
+    dataFetchersMap.put("authenticate", userDataFetcher::authenticateUser);
     return dataFetchersMap;
   }
 }

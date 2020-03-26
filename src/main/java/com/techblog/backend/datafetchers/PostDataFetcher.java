@@ -2,9 +2,9 @@ package com.techblog.backend.datafetchers;
 
 import com.techblog.backend.model.Post;
 import com.techblog.backend.repository.PostRepository;
-import com.techblog.backend.types.MutatePostResponse;
-import com.techblog.backend.types.PostResponse;
-import com.techblog.backend.types.ServiceError;
+import com.techblog.backend.types.error.ServiceError;
+import com.techblog.backend.types.post.MutatePostResponse;
+import com.techblog.backend.types.post.PostResponse;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import java.time.Instant;
