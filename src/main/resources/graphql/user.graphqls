@@ -2,8 +2,8 @@
 # extend type Query {}
 
 extend type Mutation {
-    signup(request: SignUpRequest!) : AuthenticationResponse!
-    login(request: LoginRequest!) : AuthenticationResponse!
+    signup(request: SignUpRequest!) : AuthenticationResponse
+    login(request: LoginRequest!) : AuthenticationResponse
 }
 
 #### Data ####

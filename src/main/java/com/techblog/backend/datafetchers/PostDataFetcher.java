@@ -2,7 +2,7 @@ package com.techblog.backend.datafetchers;
 
 import com.techblog.backend.model.Post;
 import com.techblog.backend.repository.PostRepository;
-import com.techblog.backend.types.error.ServiceError;
+import com.techblog.backend.types.error.ServiceErrorMessage;
 import com.techblog.backend.types.post.MutatePostResponse;
 import com.techblog.backend.types.post.PostResponse;
 import graphql.schema.DataFetcher;
@@ -46,7 +46,8 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
     MutatePostResponse response = new MutatePostResponse();
 
     if (title.isEmpty() || description.isEmpty()) {
-      response.setError(new ServiceError("Post title/description cannot be empty").getMessage());
+      response.setError(
+          new ServiceErrorMessage("Post title/description cannot be empty").getMessage());
       return response;
     }
     try {
@@ -62,7 +63,7 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
       response.setSuccess(true);
     } catch (Exception e) {
       log.error("Post mutation failed: {}", e);
-      response.setError(new ServiceError(e.getMessage()).getMessage());
+      response.setError(new ServiceErrorMessage(e.getMessage()).getMessage());
     }
     return response;
   }
@@ -75,7 +76,8 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
       List<Post> postsToDelete = postRepository.findAllById(postIds);
       if (postsToDelete.isEmpty()) {
         response.setSuccess(true);
-        response.setError(new ServiceError("entity ID doesn't match any record").getMessage());
+        response.setError(
+            new ServiceErrorMessage("entity ID doesn't match any record").getMessage());
         return response;
       }
       postRepository.deleteInBatch(postsToDelete);

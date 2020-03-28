@@ -4,7 +4,8 @@ import com.techblog.backend.authentication.JwtGenerator;
 import com.techblog.backend.authentication.PasswordUtils;
 import com.techblog.backend.model.User;
 import com.techblog.backend.repository.UserRepository;
-import com.techblog.backend.types.error.ServiceError;
+import com.techblog.backend.types.error.ServiceException;
+import com.techblog.backend.types.error.ServiceExceptionType;
 import com.techblog.backend.types.user.AuthProvider;
 import com.techblog.backend.types.user.AuthenticationResponse;
 import graphql.schema.DataFetcher;
@@ -23,7 +24,8 @@ public class UserDataFetcher implements DataFetcher<User> {
   @Autowired PasswordUtils passwordUtils;
 
   // TODO: add password validation rules
-  public AuthenticationResponse signUp(DataFetchingEnvironment environment) {
+  public AuthenticationResponse signUp(DataFetchingEnvironment environment)
+      throws ServiceException {
     AuthenticationResponse response = new AuthenticationResponse();
     try {
       LinkedHashMap requestData = environment.getArgument("request");
@@ -32,21 +34,21 @@ public class UserDataFetcher implements DataFetcher<User> {
 
       User existingUser = userRepository.getOneByEmail(email);
       if (existingUser != null) {
-        response.setError(new ServiceError("This email is already used.").getMessage());
-        return response;
+        throw new ServiceException(
+            "This email is already used.", ServiceExceptionType.AUTHENTICATION);
       } else {
         User newUser = new User(email, passwordUtils.encode(password.toString()));
         response.setUser(userRepository.save(newUser));
         response.setToken(jwtGenerator.generate(newUser));
       }
+      return response;
     } catch (Exception e) {
       log.error(e.getMessage());
-      response.setError(new ServiceError(e.getMessage()).getMessage());
+      throw e;
     }
-    return response;
   }
 
-  public AuthenticationResponse login(DataFetchingEnvironment environment) {
+  public AuthenticationResponse login(DataFetchingEnvironment environment) throws ServiceException {
     AuthenticationResponse response = new AuthenticationResponse();
     try {
       LinkedHashMap requestData = environment.getArgument("request");
@@ -55,38 +57,34 @@ public class UserDataFetcher implements DataFetcher<User> {
       Object password = requestData.get("password");
 
       if ((authProvider == null && password == null)) {
-        response.setError(
-            new ServiceError("Must provide a valid password/Auth provider").getMessage());
-        return response;
+        throw new ServiceException(
+            "Must provide a valid password/Auth provider", ServiceExceptionType.AUTHENTICATION);
       }
       User existingUser = userRepository.getOneByEmail(email);
       if (existingUser == null) {
-        if (authProvider != null) {
+        if (authProvider != null) { // handle Facebook/Google token
           User newUser =
               userRepository.save(new User(email, AuthProvider.valueOf(authProvider.toString())));
           response.setUser(newUser);
-          // handle Facebook/Google token
           return response;
         }
-        response.setError(new ServiceError("Invalid email provided.").getMessage());
-        return response;
+        throw new ServiceException("Invalid email provided.", ServiceExceptionType.AUTHENTICATION);
       }
-      if (authProvider != null) {
-        // handle Facebook/Google token
+      if (authProvider != null) { // handle Facebook/Google token
         response.setUser(existingUser);
         return response;
       }
       if (!passwordUtils.isValid(password.toString(), existingUser.getPassword())) {
-        response.setError(new ServiceError("Invalid password provided.").getMessage());
-        return response;
+        throw new ServiceException(
+            "Invalid password provided.", ServiceExceptionType.AUTHENTICATION);
       }
       response.setToken(jwtGenerator.generate(existingUser));
       response.setUser(existingUser);
+      return response;
     } catch (Exception e) {
       log.error(String.valueOf(e));
-      response.setError(new ServiceError(e.getMessage()).getMessage());
+      throw e;
     }
-    return response;
   }
 
   @Override

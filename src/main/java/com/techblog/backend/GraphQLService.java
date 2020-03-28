@@ -2,7 +2,9 @@ package com.techblog.backend;
 
 import com.techblog.backend.datafetchers.PostDataFetcher;
 import com.techblog.backend.datafetchers.UserDataFetcher;
+import com.techblog.backend.types.error.ServiceExceptionHandler;
 import graphql.GraphQL;
+import graphql.execution.AsyncSerialExecutionStrategy;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
@@ -37,7 +39,11 @@ public class GraphQLService {
 
     RuntimeWiring wiring = buildRuntimeWiring();
     GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring);
-    this.graphQL = GraphQL.newGraphQL(schema).build();
+    this.graphQL =
+        GraphQL.newGraphQL(schema)
+            .mutationExecutionStrategy(
+                new AsyncSerialExecutionStrategy(new ServiceExceptionHandler()))
+            .build();
   }
 
   private RuntimeWiring buildRuntimeWiring() {
