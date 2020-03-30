@@ -20,11 +20,18 @@ public class Post implements Serializable {
   @Getter @Setter private Instant createdAt;
   @Getter @Setter private Instant updatedAt;
 
-  public Post() {}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "authorId", referencedColumnName = "id")
+  @Getter
+  @Setter
+  private User author;
 
-  public Post(String title, String description) {
+  public Post() {};
+
+  public Post(String title, String description, User author) {
     this.title = title;
     this.description = description;
     this.createdAt = Instant.now();
-  }
+    this.author = author;
+  };
 }

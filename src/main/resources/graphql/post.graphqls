@@ -13,8 +13,13 @@ type Mutation {
 }
 
 #### Data ####
+type Author {
+    id: ID!
+}
+
 type Post {
     id: ID!
+    author: Author!
     title: String!
     description: String!
     createdAt: String!
@@ -24,6 +29,7 @@ type Post {
 #### Request ####
 input MutatePostRequest {
     id: String
+    authorId: ID
     title: String!
     description: String!
 }

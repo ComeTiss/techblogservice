@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.common.collect.ImmutableList;
 import com.techblog.backend.BaseTest;
 import com.techblog.backend.model.Post;
+import com.techblog.backend.model.User;
 import com.techblog.backend.repository.PostRepository;
+import com.techblog.backend.repository.UserRepository;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PostDataFetchersTest extends BaseTest {
   @Autowired PostRepository postRepository;
+  @Autowired UserRepository userRepository;
   @Autowired PostDataFetcher postDataFetcher;
 
   private final String TEST_DESCRIPTION = "POST DESCRIPTION";
@@ -23,7 +26,8 @@ public class PostDataFetchersTest extends BaseTest {
 
   @Test
   public void testCreatePost() {
-    createPost();
+    User user = createUser();
+    createPost(user.getId());
     List<Post> posts = postRepository.findAll();
     assertThat(posts.size()).isEqualTo(1);
     assertThat(posts.get(0).getTitle()).isEqualTo(TEST_TITLE);
@@ -33,9 +37,10 @@ public class PostDataFetchersTest extends BaseTest {
 
   @Test
   public void testUpdatePost() {
-    Post postCreated = createPost();
+    User user = createUser();
+    Post postCreated = createPost(user.getId());
     assertThat(postRepository.findAll().size()).isEqualTo(1);
-    DataFetchingEnvironmentMock dataFetchingEnvironmentMock = initQueryArguments();
+    DataFetchingEnvironmentMock dataFetchingEnvironmentMock = initQueryArguments(user.getId());
     dataFetchingEnvironmentMock =
         updatePostInputMock(dataFetchingEnvironmentMock, "id", postCreated.getId().toString());
     postDataFetcher.mutatePost(dataFetchingEnvironmentMock);
@@ -54,14 +59,16 @@ public class PostDataFetchersTest extends BaseTest {
 
   @Test
   public void testFetchAllPost() {
-    createPost();
-    createPost();
+    User user = createUser();
+    createPost(user.getId());
+    createPost(user.getId());
     assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(2);
   }
 
   @Test
   public void testDeletePostsByIds() {
-    Post postCreated = createPost();
+    User user = createUser();
+    Post postCreated = createPost(user.getId());
     assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(1);
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
     HashMap<String, Object> arguments = new HashMap<>();
@@ -71,16 +78,21 @@ public class PostDataFetchersTest extends BaseTest {
     assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(0);
   }
 
-  private Post createPost() {
-    return postDataFetcher.mutatePost(initQueryArguments()).getPost();
+  private Post createPost(Long authorId) {
+    return postDataFetcher.mutatePost(initQueryArguments(authorId)).getPost();
   }
 
-  private DataFetchingEnvironmentMock initQueryArguments() {
+  private User createUser() {
+    return userRepository.save(new User("test@gmail.com", "password"));
+  }
+
+  private DataFetchingEnvironmentMock initQueryArguments(Long authorId) {
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
     Map<String, Object> arguments = new HashMap<>();
     LinkedHashMap<String, Object> post = new LinkedHashMap<>();
     post.put("title", TEST_TITLE);
     post.put("description", TEST_DESCRIPTION);
+    post.put("authorId", authorId.toString());
     arguments.put("request", post);
     dataFetchingEnvironmentMock.setArguments(arguments);
     return dataFetchingEnvironmentMock;

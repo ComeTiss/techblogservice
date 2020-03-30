@@ -1,7 +1,9 @@
 package com.techblog.backend.datafetchers;
 
 import com.techblog.backend.model.Post;
+import com.techblog.backend.model.User;
 import com.techblog.backend.repository.PostRepository;
+import com.techblog.backend.repository.UserRepository;
 import com.techblog.backend.types.error.ServiceErrorMessage;
 import com.techblog.backend.types.post.MutatePostResponse;
 import com.techblog.backend.types.post.PostResponse;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 public class PostDataFetcher implements DataFetcher<List<Post>> {
 
   @Autowired PostRepository postRepository;
+  @Autowired UserRepository userRepository;
 
   public PostResponse getAllPosts(DataFetchingEnvironment environment) {
     PostResponse response = new PostResponse();
@@ -43,6 +46,8 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
     LinkedHashMap requestData = environment.getArgument("request");
     String title = requestData.get("title").toString();
     String description = requestData.get("description").toString();
+    Object authorId = requestData.get("authorId");
+    Object postId = requestData.get("id");
     MutatePostResponse response = new MutatePostResponse();
 
     if (title.isEmpty() || description.isEmpty()) {
@@ -51,14 +56,19 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
       return response;
     }
     try {
-      if (requestData.get("id") != null) {
-        Post currentPost = postRepository.getOne(Long.valueOf(requestData.get("id").toString()));
+      if (postId != null) {
+        Post currentPost = postRepository.getOne(Long.valueOf(postId.toString()));
         currentPost.setDescription(description);
         currentPost.setTitle(title);
         currentPost.setUpdatedAt(Instant.now());
         response.setPost(postRepository.save(currentPost));
       } else {
-        response.setPost(postRepository.save(new Post(title, description)));
+        User author = userRepository.getOne(Long.valueOf(authorId.toString()));
+        if (author == null) {
+          response.setError(new ServiceErrorMessage("Unknown authorID provided").getMessage());
+          return response;
+        }
+        response.setPost(postRepository.save(new Post(title, description, author)));
       }
       response.setSuccess(true);
     } catch (Exception e) {
