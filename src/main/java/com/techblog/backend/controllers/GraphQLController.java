@@ -9,6 +9,7 @@ import com.techblog.backend.types.error.ServiceExceptionType;
 import com.techblog.backend.types.post.BaseResponseData;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
+import graphql.validation.ValidationError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,9 @@ public class GraphQLController {
       ExecutionResult executionResult = graphQLService.getGraphQL().execute(input);
 
       if (!executionResult.getErrors().isEmpty()) {
+        if (executionResult.getErrors().get(0) instanceof ValidationError) {
+          return new BaseResponse(executionResult.getErrors().get(0), HttpStatus.BAD_REQUEST);
+        }
         ServiceError serviceError = (ServiceError) executionResult.getErrors().get(0);
         if (serviceError.getExceptionType().equals(ServiceExceptionType.AUTHENTICATION)) {
           return new BaseResponse(serviceError, HttpStatus.UNAUTHORIZED);

@@ -63,6 +63,10 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
         currentPost.setUpdatedAt(Instant.now());
         response.setPost(postRepository.save(currentPost));
       } else {
+        if (authorId == null) {
+          response.setError(new ServiceErrorMessage("authorID cannot be null").getMessage());
+          return response;
+        }
         User author = userRepository.getOne(Long.valueOf(authorId.toString()));
         if (author == null) {
           response.setError(new ServiceErrorMessage("Unknown authorID provided").getMessage());
