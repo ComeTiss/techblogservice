@@ -9,7 +9,6 @@ import com.techblog.backend.types.error.ServiceExceptionType;
 import com.techblog.backend.types.post.BaseResponseData;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
-import graphql.validation.ValidationError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,14 +33,17 @@ public class GraphQLController {
       ExecutionResult executionResult = graphQLService.getGraphQL().execute(input);
 
       if (!executionResult.getErrors().isEmpty()) {
-        if (executionResult.getErrors().get(0) instanceof ValidationError) {
-          return new BaseResponse(executionResult.getErrors().get(0), HttpStatus.BAD_REQUEST);
+        try {
+          ServiceError serviceError = (ServiceError) executionResult.getErrors().get(0);
+          if (serviceError.getExceptionType().equals(ServiceExceptionType.AUTHENTICATION)) {
+            return new BaseResponse(serviceError, HttpStatus.UNAUTHORIZED);
+          }
+          return new BaseResponse(serviceError, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+          return new BaseResponse(
+              new ServiceErrorMessage(executionResult.getErrors().get(0).getMessage()),
+              HttpStatus.BAD_REQUEST);
         }
-        ServiceError serviceError = (ServiceError) executionResult.getErrors().get(0);
-        if (serviceError.getExceptionType().equals(ServiceExceptionType.AUTHENTICATION)) {
-          return new BaseResponse(serviceError, HttpStatus.UNAUTHORIZED);
-        }
-        return new BaseResponse(serviceError, HttpStatus.BAD_REQUEST);
       }
       return new BaseResponse(new BaseResponseData(executionResult.getData()), HttpStatus.OK);
     } catch (Exception e) {

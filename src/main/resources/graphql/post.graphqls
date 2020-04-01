@@ -4,7 +4,7 @@ schema {
 }
 
 type Query {
-    getAllPosts: PostsResponse!
+    getPostsWithFilters(request: GetPostRequest!): PostsResponse!
 }
 
 type Mutation {
@@ -26,12 +26,20 @@ type Post {
     updatedAt: String
 }
 
+input PostFilters {
+    authorId: ID!
+}
+
 #### Request ####
 input MutatePostRequest {
     id: String
     authorId: ID
     title: String!
     description: String!
+}
+
+input GetPostRequest {
+    filters: PostFilters
 }
 
 #### Response ####

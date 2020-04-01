@@ -58,7 +58,7 @@ public class GraphQLControllerTest extends BaseTest {
     BaseRequestData query = new BaseRequestData();
     query.setQuery(
         "{\n"
-            + "  getAllPosts {\n"
+            + "  getPostsWithFilters(request: {}) {\n"
             + "    success\n"
             + "    error\n"
             + "    posts {\n"

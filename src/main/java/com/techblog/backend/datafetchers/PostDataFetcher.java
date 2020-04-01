@@ -24,11 +24,17 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
   @Autowired PostRepository postRepository;
   @Autowired UserRepository userRepository;
 
-  public PostResponse getAllPosts(DataFetchingEnvironment environment) {
+  public PostResponse getPostsWithFilters(DataFetchingEnvironment environment) {
     PostResponse response = new PostResponse();
+    LinkedHashMap requestData = environment.getArgument("request");
+    LinkedHashMap filters = (LinkedHashMap) requestData.get("filters");
     try {
-      response.setPosts(postRepository.findAll());
-      response.setSuccess(true);
+      if (filters != null) {
+        Long authorId = Long.valueOf(filters.get("authorId").toString());
+        response.setPosts(postRepository.getPostsByAuthorId(authorId));
+      } else {
+        response.setPosts(postRepository.findAll());
+      }
     } catch (Exception e) {
       log.error("Post query failed: {}", e);
       response.setError(e.getMessage());
@@ -74,7 +80,6 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
         }
         response.setPost(postRepository.save(new Post(title, description, author)));
       }
-      response.setSuccess(true);
     } catch (Exception e) {
       log.error("Post mutation failed: {}", e);
       response.setError(new ServiceErrorMessage(e.getMessage()).getMessage());
@@ -89,13 +94,11 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
     try {
       List<Post> postsToDelete = postRepository.findAllById(postIds);
       if (postsToDelete.isEmpty()) {
-        response.setSuccess(true);
         response.setError(
             new ServiceErrorMessage("entity ID doesn't match any record").getMessage());
         return response;
       }
       postRepository.deleteInBatch(postsToDelete);
-      response.setSuccess(true);
       response.setPosts(postsToDelete);
     } catch (Exception e) {
       log.error("Post mutation failed: {}", e);

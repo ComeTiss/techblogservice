@@ -55,7 +55,7 @@ public class GraphQLService {
 
   private Map<String, DataFetcher> queryDataFetchers() {
     Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
-    dataFetchersMap.put("getAllPosts", postDataFetcher::getAllPosts);
+    dataFetchersMap.put("getPostsWithFilters", postDataFetcher::getPostsWithFilters);
     return dataFetchersMap;
   }
 

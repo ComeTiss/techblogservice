@@ -62,20 +62,20 @@ public class PostDataFetchersTest extends BaseTest {
     User user = createUser();
     createPost(user.getId());
     createPost(user.getId());
-    assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(2);
+    assertThat(postDataFetcher.getPostsWithFilters(null).getPosts().size()).isEqualTo(2);
   }
 
   @Test
   public void testDeletePostsByIds() {
     User user = createUser();
     Post postCreated = createPost(user.getId());
-    assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(1);
+    assertThat(postDataFetcher.getPostsWithFilters(null).getPosts().size()).isEqualTo(1);
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("ids", ImmutableList.of(postCreated.getId().toString()));
     dataFetchingEnvironmentMock.setArguments(arguments);
     postDataFetcher.deletePostByIds(dataFetchingEnvironmentMock);
-    assertThat(postDataFetcher.getAllPosts(null).getPosts().size()).isEqualTo(0);
+    assertThat(postDataFetcher.getPostsWithFilters(null).getPosts().size()).isEqualTo(0);
   }
 
   private Post createPost(Long authorId) {
