@@ -1,6 +1,5 @@
 package com.techblog.backend.model;
 
-import com.techblog.backend.types.vote.PostVoteType;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -30,7 +29,7 @@ public class Post implements Serializable {
   @JoinColumn(name = "authorId", referencedColumnName = "id")
   private User author;
 
-  @OneToMany(mappedBy = "post")
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   private Set<PostVote> votes = new HashSet<>();
 
   public Post(String title, String description, User author) {
@@ -38,15 +37,5 @@ public class Post implements Serializable {
     this.description = description;
     this.createdAt = Instant.now();
     this.author = author;
-  };
-
-  public PostVote addVote(User user, PostVoteType voteType) {
-    PostVote newVote = new PostVote(this, user, voteType);
-    this.votes.add(newVote);
-    return newVote;
-  }
-
-  public boolean removeVote(User user, PostVoteType voteType) {
-    return this.votes.remove(new PostVote(this, user, voteType));
   }
 }

@@ -25,7 +25,7 @@ public class User implements Serializable {
   @Column(unique = true)
   private String email;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private Set<PostVote> votes = new HashSet<>();
 
   private String password;

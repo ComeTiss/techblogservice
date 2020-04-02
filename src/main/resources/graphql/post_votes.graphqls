@@ -1,7 +1,7 @@
 
 extend type Mutation {
-    mutateVote(request: VoteRequest!) : VoteResponse!
-    deleteVote(request: VoteRequest!) : VoteResponse!
+    mutateVote(request: MutateVoteRequest!) : VoteResponse!
+    deleteVote(request: DeleteVoteRequest!) : VoteResponse!
 }
 
 #### Data ####
@@ -18,8 +18,12 @@ type Vote {
 
 #### Request ####
 
+input DeleteVoteRequest {
+    postId: ID!
+    authorId: ID!
+}
 
-input VoteRequest {
+input MutateVoteRequest {
     postId: ID!
     authorId: ID!
     vote: VoteType!
