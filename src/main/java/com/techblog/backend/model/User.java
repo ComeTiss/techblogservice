@@ -2,30 +2,34 @@ package com.techblog.backend.model;
 
 import com.techblog.backend.types.user.AuthProvider;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "users")
 public class User implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Getter
   private Long id;
 
-  @Getter @Setter private String fullName;
+  private String fullName;
 
   @Column(unique = true)
-  @Getter
-  @Setter
   private String email;
 
-  @Getter @Setter private String password;
-  @Getter @Setter private AuthProvider authProvider;
+  @OneToMany(mappedBy = "user")
+  private Set<PostVote> votes = new HashSet<>();
 
-  public User() {}
+  private String password;
+  private AuthProvider authProvider;
 
   public User(String email) {
     this.email = email;

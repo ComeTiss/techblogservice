@@ -1,7 +1,10 @@
 package com.techblog.backend;
 
+import com.google.common.collect.ImmutableList;
 import com.techblog.backend.datafetchers.PostDataFetcher;
+import com.techblog.backend.datafetchers.PostVotesDataFetcher;
 import com.techblog.backend.datafetchers.UserDataFetcher;
+import com.techblog.backend.model.PostVote;
 import com.techblog.backend.types.error.ServiceExceptionHandler;
 import graphql.GraphQL;
 import graphql.execution.AsyncSerialExecutionStrategy;
@@ -13,9 +16,12 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,17 +31,16 @@ public class GraphQLService {
 
   @Autowired private PostDataFetcher postDataFetcher;
   @Autowired private UserDataFetcher userDataFetcher;
+  @Autowired private PostVotesDataFetcher postVotesDataFetcher;
 
   @Getter private GraphQL graphQL;
 
   @PostConstruct
   private void loadSchema() throws IOException {
-    File schemaFile = new File("src/main/resources/graphql/post.graphqls");
-    File schemaFile2 = new File("src/main/resources/graphql/user.graphqls");
+    List<File> files = loadFiles();
     SchemaParser schemaParser = new SchemaParser();
     TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
-    typeRegistry.merge(schemaParser.parse(schemaFile));
-    typeRegistry.merge(schemaParser.parse(schemaFile2));
+    files.forEach(file -> typeRegistry.merge(schemaParser.parse(file)));
 
     RuntimeWiring wiring = buildRuntimeWiring();
     GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring);
@@ -44,6 +49,17 @@ public class GraphQLService {
             .mutationExecutionStrategy(
                 new AsyncSerialExecutionStrategy(new ServiceExceptionHandler()))
             .build();
+  }
+
+  private List<File> loadFiles() {
+    List<String> filenames = ImmutableList.of(
+            "src/main/resources/graphql/user.graphqls",
+            "src/main/resources/graphql/post.graphqls",
+            "src/main/resources/graphql/post_votes.graphqls"
+    );
+    List<File> files = new ArrayList<>();
+    filenames.forEach(f -> files.add(new File(f)));
+    return files;
   }
 
   private RuntimeWiring buildRuntimeWiring() {
@@ -63,6 +79,10 @@ public class GraphQLService {
     Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
     dataFetchersMap.put("mutatePost", postDataFetcher::mutatePost);
     dataFetchersMap.put("deletePostsByIds", postDataFetcher::deletePostByIds);
+
+    dataFetchersMap.put("mutateVote", postVotesDataFetcher::mutateVote);
+    dataFetchersMap.put("deleteVote", postVotesDataFetcher::deleteVote);
+
     dataFetchersMap.put("signup", userDataFetcher::signUp);
     dataFetchersMap.put("login", userDataFetcher::login);
     return dataFetchersMap;

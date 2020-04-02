@@ -1,0 +1,32 @@
+
+extend type Mutation {
+    mutateVote(request: VoteRequest!) : VoteResponse!
+    deleteVote(request: VoteRequest!) : VoteResponse!
+}
+
+#### Data ####
+enum VoteType {
+    UP,
+    DOWN
+}
+
+type Vote {
+    post: Post
+    user: User
+    vote: VoteType!
+}
+
+#### Request ####
+
+
+input VoteRequest {
+    postId: ID!
+    authorId: ID!
+    vote: VoteType!
+}
+
+#### Response ####
+
+type VoteResponse {
+    vote: Vote
+}
