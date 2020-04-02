@@ -1,12 +1,11 @@
 package com.techblog.backend.model;
 
+import com.techblog.backend.types.vote.PostVoteType;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
-
-import com.techblog.backend.types.vote.PostVoteType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

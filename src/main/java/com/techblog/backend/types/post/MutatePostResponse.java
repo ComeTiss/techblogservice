@@ -4,11 +4,12 @@ import com.techblog.backend.model.Post;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class MutatePostResponse {
-   private Boolean success;
-   private String error;
-   private Post post;
+  private Boolean success;
+  private String error;
+  private Post post;
 
   public MutatePostResponse() {
     this.success = false;

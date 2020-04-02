@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.techblog.backend.datafetchers.PostDataFetcher;
 import com.techblog.backend.datafetchers.PostVotesDataFetcher;
 import com.techblog.backend.datafetchers.UserDataFetcher;
-import com.techblog.backend.model.PostVote;
 import com.techblog.backend.types.error.ServiceExceptionHandler;
 import graphql.GraphQL;
 import graphql.execution.AsyncSerialExecutionStrategy;
@@ -21,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,11 +50,11 @@ public class GraphQLService {
   }
 
   private List<File> loadFiles() {
-    List<String> filenames = ImmutableList.of(
+    List<String> filenames =
+        ImmutableList.of(
             "src/main/resources/graphql/user.graphqls",
             "src/main/resources/graphql/post.graphqls",
-            "src/main/resources/graphql/post_votes.graphqls"
-    );
+            "src/main/resources/graphql/post_votes.graphqls");
     List<File> files = new ArrayList<>();
     filenames.forEach(f -> files.add(new File(f)));
     return files;

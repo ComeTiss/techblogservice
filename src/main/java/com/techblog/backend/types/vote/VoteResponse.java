@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VoteResponse {
-    private PostVote vote;
+  private PostVote vote;
 }
