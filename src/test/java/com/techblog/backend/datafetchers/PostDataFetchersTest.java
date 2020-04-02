@@ -62,20 +62,23 @@ public class PostDataFetchersTest extends BaseTest {
     User user = createUser();
     createPost(user.getId());
     createPost(user.getId());
-    assertThat(postDataFetcher.getPostsWithFilters(null).getPosts().size()).isEqualTo(2);
+    assertThat(postDataFetcher.getPostsWithFilters(initFiltersArgument()).getPosts().size())
+        .isEqualTo(2);
   }
 
   @Test
   public void testDeletePostsByIds() {
     User user = createUser();
     Post postCreated = createPost(user.getId());
-    assertThat(postDataFetcher.getPostsWithFilters(null).getPosts().size()).isEqualTo(1);
+    assertThat(postDataFetcher.getPostsWithFilters(initFiltersArgument()).getPosts().size())
+        .isEqualTo(1);
     DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("ids", ImmutableList.of(postCreated.getId().toString()));
     dataFetchingEnvironmentMock.setArguments(arguments);
     postDataFetcher.deletePostByIds(dataFetchingEnvironmentMock);
-    assertThat(postDataFetcher.getPostsWithFilters(null).getPosts().size()).isEqualTo(0);
+    assertThat(postDataFetcher.getPostsWithFilters(initFiltersArgument()).getPosts().size())
+        .isEqualTo(0);
   }
 
   private Post createPost(Long authorId) {
@@ -94,6 +97,15 @@ public class PostDataFetchersTest extends BaseTest {
     post.put("description", TEST_DESCRIPTION);
     post.put("authorId", authorId.toString());
     arguments.put("request", post);
+    dataFetchingEnvironmentMock.setArguments(arguments);
+    return dataFetchingEnvironmentMock;
+  }
+
+  private DataFetchingEnvironmentMock initFiltersArgument() {
+    DataFetchingEnvironmentMock dataFetchingEnvironmentMock = new DataFetchingEnvironmentMock();
+    Map<String, Object> arguments = new HashMap<>();
+    LinkedHashMap<String, Object> request = new LinkedHashMap<>();
+    arguments.put("request", request);
     dataFetchingEnvironmentMock.setArguments(arguments);
     return dataFetchingEnvironmentMock;
   }
