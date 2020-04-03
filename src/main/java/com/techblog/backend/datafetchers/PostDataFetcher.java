@@ -1,5 +1,6 @@
 package com.techblog.backend.datafetchers;
 
+import com.techblog.backend.dao.PostDao;
 import com.techblog.backend.model.Post;
 import com.techblog.backend.model.User;
 import com.techblog.backend.repository.PostRepository;
@@ -10,8 +11,10 @@ import com.techblog.backend.types.post.PostResponse;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PostDataFetcher implements DataFetcher<List<Post>> {
 
+  @Autowired PostDao postDao;
   @Autowired PostRepository postRepository;
   @Autowired UserRepository userRepository;
 
@@ -29,11 +33,18 @@ public class PostDataFetcher implements DataFetcher<List<Post>> {
     LinkedHashMap requestData = environment.getArgument("request");
     LinkedHashMap filters = (LinkedHashMap) requestData.get("filters");
     try {
+      List<Post> posts = new ArrayList<>();
       if (filters != null) {
         Long authorId = Long.valueOf(filters.get("authorId").toString());
-        response.setPosts(postRepository.getPostsByAuthorId(authorId));
+        posts = postRepository.getPostsByAuthorId(authorId);
       } else {
-        response.setPosts(postRepository.findAll());
+        posts = postRepository.findAll();
+      }
+      Optional<List<Post>> postsWithVotesOpt = postDao.getPostsWithVotes(posts);
+      if (postsWithVotesOpt.isPresent()) {
+        response.setPosts(postsWithVotesOpt.get());
+      } else {
+        response.setPosts(posts);
       }
     } catch (Exception e) {
       log.error("Post query failed: {}", e);

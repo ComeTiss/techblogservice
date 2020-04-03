@@ -24,6 +24,7 @@ type Post {
     description: String!
     createdAt: String!
     updatedAt: String
+    votes: [Vote]
 }
 
 input PostFilters {
