@@ -2,14 +2,11 @@ package com.techblog.backend.datafetchers;
 
 import com.techblog.backend.dao.PostDao;
 import com.techblog.backend.model.Post;
-import com.techblog.backend.repository.PostRepository;
-import com.techblog.backend.repository.UserRepository;
 import com.techblog.backend.types.error.ServiceErrorMessage;
 import com.techblog.backend.types.post.MutatePostResponse;
 import com.techblog.backend.types.post.PostResponse;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -23,27 +20,14 @@ import org.springframework.stereotype.Component;
 public class PostDataFetcher implements DataFetcher<List<Post>> {
 
   @Autowired PostDao postDao;
-  @Autowired PostRepository postRepository;
-  @Autowired UserRepository userRepository;
 
   public PostResponse getPostsWithFilters(DataFetchingEnvironment environment) {
     PostResponse response = new PostResponse();
     LinkedHashMap requestData = environment.getArgument("request");
     LinkedHashMap filters = (LinkedHashMap) requestData.get("filters");
     try {
-      List<Post> posts = new ArrayList<>();
-      if (filters != null) {
-        Long authorId = Long.valueOf(filters.get("authorId").toString());
-        posts = postRepository.getPostsByAuthorId(authorId);
-      } else {
-        posts = postRepository.findAll();
-      }
-      Optional<List<Post>> postsWithVotesOpt = postDao.getPostsWithVotes(posts);
-      if (postsWithVotesOpt.isPresent()) {
-        response.setPosts(postsWithVotesOpt.get());
-      } else {
-        response.setPosts(posts);
-      }
+      Optional<List<Post>> postsOpt = postDao.getPostsWithFilters(filters);
+      postsOpt.ifPresent(response::setPosts);
     } catch (Exception e) {
       log.error("Post query failed: {}", e);
       response.setError(e.getMessage());

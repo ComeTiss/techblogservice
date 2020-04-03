@@ -45,15 +45,15 @@ public class PostDao {
     return Optional.of(postCreated);
   }
 
-  public Optional<List<Post>> getPostsWithVotes(List<Post> posts) {
-    List<Post> postsWithVotes = new ArrayList<>(posts);
-    List<Long> postIds = postsWithVotes.stream().map(Post::getId).collect(Collectors.toList());
-    Optional<HashMap<Long, List<PostVote>>> votesMapOpt = postVoteDao.getPostsVotesMap(postIds);
-    if (votesMapOpt.isPresent() && !votesMapOpt.get().isEmpty()) {
-      postsWithVotes.forEach(
-          post -> post.setVotes(new HashSet<>(votesMapOpt.get().get(post.getId()))));
+  public Optional<List<Post>> getPostsWithFilters(LinkedHashMap filters) {
+    List<Post> posts = new ArrayList<>();
+    if (filters != null) {
+      Long authorId = Long.valueOf(filters.get("authorId").toString());
+      posts = postRepository.getPostsByAuthorId(authorId);
+    } else {
+      postRepository.findAll();
     }
-    return Optional.of(postsWithVotes);
+    return getPostsWithVotes(posts);
   }
 
   public Optional<List<Post>> deletePostsByIds(List<Long> postIds) {
@@ -63,5 +63,16 @@ public class PostDao {
     }
     postRepository.deleteInBatch(postsToDelete);
     return Optional.of(postsToDelete);
+  }
+
+  private Optional<List<Post>> getPostsWithVotes(List<Post> posts) {
+    List<Post> postsWithVotes = new ArrayList<>(posts);
+    List<Long> postIds = postsWithVotes.stream().map(Post::getId).collect(Collectors.toList());
+    Optional<HashMap<Long, List<PostVote>>> votesMapOpt = postVoteDao.getPostsVotesMap(postIds);
+    if (votesMapOpt.isPresent() && !votesMapOpt.get().isEmpty()) {
+      postsWithVotes.forEach(
+          post -> post.setVotes(new HashSet<>(votesMapOpt.get().get(post.getId()))));
+    }
+    return Optional.of(postsWithVotes);
   }
 }
