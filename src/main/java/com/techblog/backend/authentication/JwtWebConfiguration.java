@@ -1,11 +1,6 @@
 package com.techblog.backend.authentication;
 
-import java.util.Collections;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -15,29 +10,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableWebSecurity
 public class JwtWebConfiguration extends WebSecurityConfigurerAdapter {
 
-  @Autowired JwtAuthenticationProvider jwtAuthenticationProvider;
-  @Autowired JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
-
-  @Bean
-  public AuthenticationManager authenticationManager() {
-    return new ProviderManager(Collections.singletonList(jwtAuthenticationProvider));
-  }
-
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    System.out.println("Passing through middleware");
     http.csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers("**/graphql/**")
+        .antMatchers(SecurityConstants.SIGN_UP_URL)
         .permitAll()
+        .antMatchers(SecurityConstants.LOGIN_URL)
+        .permitAll()
+        .anyRequest()
+        .authenticated()
         .and()
-        .exceptionHandling()
-        .and()
+        //   .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+        .addFilter(new JwtAuthorizationFilter(authenticationManager()))
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    //        http.addFilterBefore(jwtAuthenticationTokenFilter,
-    // UsernamePasswordAuthenticationFilter.class);
     http.headers().cacheControl();
   }
 }

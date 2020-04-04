@@ -1,16 +1,12 @@
 package com.techblog.backend.authentication;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 
-@Component
+@UtilityClass
 public class PasswordUtils {
 
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-  public PasswordUtils() {
-    this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
-  }
+  private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
   public String encode(String password) {
     return bCryptPasswordEncoder.encode(password);

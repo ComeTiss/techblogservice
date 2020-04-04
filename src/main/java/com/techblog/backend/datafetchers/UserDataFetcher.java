@@ -1,6 +1,6 @@
 package com.techblog.backend.datafetchers;
 
-import com.techblog.backend.authentication.JwtGenerator;
+import com.techblog.backend.authentication.JwtUtils;
 import com.techblog.backend.authentication.PasswordUtils;
 import com.techblog.backend.model.User;
 import com.techblog.backend.repository.UserRepository;
@@ -20,8 +20,6 @@ import org.springframework.stereotype.Component;
 public class UserDataFetcher implements DataFetcher<User> {
 
   @Autowired UserRepository userRepository;
-  @Autowired JwtGenerator jwtGenerator;
-  @Autowired PasswordUtils passwordUtils;
 
   // TODO: add password validation rules
   public AuthenticationResponse signUp(DataFetchingEnvironment environment)
@@ -37,9 +35,9 @@ public class UserDataFetcher implements DataFetcher<User> {
         throw new ServiceException(
             "This email is already used.", ServiceExceptionType.AUTHENTICATION);
       } else {
-        User newUser = new User(email, passwordUtils.encode(password.toString()));
+        User newUser = new User(email, PasswordUtils.encode(password.toString()));
         response.setUser(userRepository.save(newUser));
-        response.setToken(jwtGenerator.generate(newUser));
+        response.setToken(JwtUtils.generate(newUser));
       }
       return response;
     } catch (Exception e) {
@@ -74,11 +72,11 @@ public class UserDataFetcher implements DataFetcher<User> {
         response.setUser(existingUser);
         return response;
       }
-      if (!passwordUtils.isValid(password.toString(), existingUser.getPassword())) {
+      if (!PasswordUtils.isValid(password.toString(), existingUser.getPassword())) {
         throw new ServiceException(
             "Invalid password provided.", ServiceExceptionType.AUTHENTICATION);
       }
-      response.setToken(jwtGenerator.generate(existingUser));
+      response.setToken(JwtUtils.generate(existingUser));
       response.setUser(existingUser);
       return response;
     } catch (Exception e) {
