@@ -45,6 +45,10 @@ public class PostDao {
     return Optional.of(postCreated);
   }
 
+  public Optional<Post> getPostById(Long postId) {
+    return postRepository.findById(postId);
+  }
+
   public Optional<List<Post>> getPostsWithFilters(LinkedHashMap filters) {
     List<Post> posts = new ArrayList<>();
     if (filters != null) {

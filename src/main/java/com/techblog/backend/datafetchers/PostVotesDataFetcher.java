@@ -1,10 +1,10 @@
 package com.techblog.backend.datafetchers;
 
+import com.techblog.backend.dao.PostDao;
 import com.techblog.backend.dao.PostVoteDao;
 import com.techblog.backend.model.Post;
 import com.techblog.backend.model.PostVote;
 import com.techblog.backend.model.User;
-import com.techblog.backend.repository.PostRepository;
 import com.techblog.backend.repository.UserRepository;
 import com.techblog.backend.types.vote.PostVoteType;
 import com.techblog.backend.types.vote.VoteResponse;
@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PostVotesDataFetcher implements DataFetcher<PostVote> {
 
-  @Autowired PostRepository postRepository;
   @Autowired UserRepository userRepository;
   @Autowired PostVoteDao postVoteDao;
+  @Autowired PostDao postDao;
 
   public VoteResponse mutateVote(DataFetchingEnvironment environment) {
     VoteResponse response = new VoteResponse();
@@ -32,17 +32,17 @@ public class PostVotesDataFetcher implements DataFetcher<PostVote> {
       Long authorId = Long.valueOf(requestData.get("authorId").toString());
       PostVoteType vote = PostVoteType.valueOf(requestData.get("vote").toString());
 
-      Post post = postRepository.getOne(postId);
-      if (post == null) {
+      Optional<Post> postOpt = postDao.getPostById(postId);
+      if (!postOpt.isPresent()) {
         return response;
       }
-      User user = userRepository.getOne(authorId);
-      if (user == null) {
+      Optional<User> userOpt = userRepository.findById(authorId);
+      if (!userOpt.isPresent()) {
         return response;
       }
       Optional<PostVote> currentVote = postVoteDao.getVoteByPK(postId, authorId);
       currentVote.ifPresent(postVoteDao::deleteVote);
-      response.setVote(postVoteDao.createVote(post, user, vote));
+      response.setVote(postVoteDao.createVote(postOpt.get(), userOpt.get(), vote));
     } catch (Exception e) {
       log.error(String.valueOf(e));
     }
