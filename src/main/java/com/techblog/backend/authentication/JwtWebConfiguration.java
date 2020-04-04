@@ -25,6 +25,7 @@ public class JwtWebConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
+    System.out.println("Passing through middleware");
     http.csrf()
         .disable()
         .authorizeRequests()

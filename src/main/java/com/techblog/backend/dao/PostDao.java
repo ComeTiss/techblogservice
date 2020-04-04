@@ -50,12 +50,12 @@ public class PostDao {
   }
 
   public Optional<List<Post>> getPostsWithFilters(LinkedHashMap filters) {
-    List<Post> posts = new ArrayList<>();
+    List<Post> posts;
     if (filters != null) {
       Long authorId = Long.valueOf(filters.get("authorId").toString());
       posts = postRepository.getPostsByAuthorId(authorId);
     } else {
-      postRepository.findAll();
+      posts = postRepository.findAll();
     }
     return getPostsWithVotes(posts);
   }
