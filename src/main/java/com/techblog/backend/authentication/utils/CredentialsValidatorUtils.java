@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CredentialsValidatorUtils {
-
+  /**
+   * More information: https://howtodoinjava.com/regex/how-to-build-regex-based-password-validator-in-java/
+   */
   private static final String MUST_LOWER_CASE = "(?=.*[a-z])";
   private static final String MUST_DIGIT = "(?=.*\\d)";
   private static final String MUST_UPPER_CASE = "(?=.*[A-Z])";
