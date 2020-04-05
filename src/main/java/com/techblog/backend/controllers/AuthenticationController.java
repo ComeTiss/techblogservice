@@ -1,7 +1,8 @@
 package com.techblog.backend.controllers;
 
+import com.techblog.backend.authentication.utils.CredentialsValidatorUtils;
+import com.techblog.backend.authentication.utils.EncryptionUtils;
 import com.techblog.backend.authentication.utils.JwtUtils;
-import com.techblog.backend.authentication.utils.PasswordUtils;
 import com.techblog.backend.dao.UserDao;
 import com.techblog.backend.model.User;
 import com.techblog.backend.types.user.AuthProvider;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
   @Autowired UserDao userDao;
+  @Autowired CredentialsValidatorUtils validator;
 
   @PostMapping("/login")
   public AuthenticationResponse loginController(
@@ -57,7 +59,7 @@ public class AuthenticationController {
       }
 
       String encryptedPassword = existingUserOpt.get().getPassword();
-      if (!PasswordUtils.isValid(password, encryptedPassword)) {
+      if (!EncryptionUtils.isPasswordCorrect(password, encryptedPassword)) {
         response.setError("Invalid password provided.");
         httpResponse.setStatus(401);
       } else {
@@ -79,6 +81,17 @@ public class AuthenticationController {
     try {
       String email = requestBody.getEmail();
       String password = requestBody.getPassword();
+
+      if (!validator.isEmailValid(email)) {
+        response.setError("Invalid format for email provided.");
+        httpResponse.setStatus(401);
+        return response;
+      }
+      if (!validator.isPasswordValid(password)) {
+        response.setError(validator.invalidPasswordMessage());
+        httpResponse.setStatus(401);
+        return response;
+      }
 
       Optional<User> userCreatedOpt = userDao.createUser(email, password);
       if (userCreatedOpt.isPresent()) {

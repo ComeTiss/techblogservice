@@ -2,8 +2,8 @@ package com.techblog.backend.authentication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.techblog.backend.authentication.utils.EncryptionUtils;
 import com.techblog.backend.authentication.utils.JwtUtils;
-import com.techblog.backend.authentication.utils.PasswordUtils;
 import com.techblog.backend.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +34,6 @@ public class JwtUtilsTest {
 
     User userFromToken = JwtUtils.validate(TOKEN);
     assertThat(userFromToken.getEmail()).isEqualTo(EMAIL);
-    assertThat(PasswordUtils.isValid(PASSWORD, userFromToken.getPassword())).isTrue();
+    assertThat(EncryptionUtils.isPasswordCorrect(PASSWORD, userFromToken.getPassword())).isTrue();
   }
 }

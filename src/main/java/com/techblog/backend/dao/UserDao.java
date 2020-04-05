@@ -1,6 +1,6 @@
 package com.techblog.backend.dao;
 
-import com.techblog.backend.authentication.utils.PasswordUtils;
+import com.techblog.backend.authentication.utils.EncryptionUtils;
 import com.techblog.backend.model.User;
 import com.techblog.backend.repository.UserRepository;
 import com.techblog.backend.types.user.AuthProvider;
@@ -27,14 +27,11 @@ public class UserDao {
   }
 
   public Optional<User> createUser(String email, String passwordRaw) {
-    if (!isStringValid(email) || !isStringValid(passwordRaw)) {
-      return Optional.empty();
-    }
     Optional<User> existingUserOpt = findOneByEmail(email);
     if (existingUserOpt.isPresent()) {
       return Optional.empty();
     }
-    String encryptedPassword = PasswordUtils.encode(passwordRaw);
+    String encryptedPassword = EncryptionUtils.encodePassword(passwordRaw);
     User userCreated = userRepository.save(new User(email, encryptedPassword));
     return Optional.of(userCreated);
   }
