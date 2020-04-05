@@ -5,7 +5,6 @@ import com.techblog.backend.types.BaseRequestData;
 import com.techblog.backend.types.BaseResponse;
 import com.techblog.backend.types.error.ServiceError;
 import com.techblog.backend.types.error.ServiceErrorMessage;
-import com.techblog.backend.types.error.ServiceExceptionType;
 import com.techblog.backend.types.post.BaseResponseData;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
@@ -35,9 +34,6 @@ public class GraphQLController {
       if (!executionResult.getErrors().isEmpty()) {
         try {
           ServiceError serviceError = (ServiceError) executionResult.getErrors().get(0);
-          if (serviceError.getExceptionType().equals(ServiceExceptionType.AUTHENTICATION)) {
-            return new BaseResponse(serviceError, HttpStatus.UNAUTHORIZED);
-          }
           return new BaseResponse(serviceError, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
           return new BaseResponse(

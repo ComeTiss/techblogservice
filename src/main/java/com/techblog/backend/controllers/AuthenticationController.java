@@ -40,7 +40,7 @@ public class AuthenticationController {
 
       Optional<User> existingUserOpt = userDao.findOneByEmail(email);
       if (!existingUserOpt.isPresent()) {
-        if (authProvider != null) { // handle Facebook/Google token
+        if (authProvider != null) { // handle new Facebook/Google account login
           Optional<User> newUser = userDao.createUserFromAuthProvider(email, authProvider);
           response.setUser(
               new BasicUser(newUser.get().getId(), email, newUser.get().getAuthProvider()));
@@ -51,7 +51,7 @@ public class AuthenticationController {
         return response;
       }
 
-      if (authProvider != null) { // handle Facebook/Google token
+      if (authProvider != null) { // handle existing Facebook/Google login
         response.setUser(new BasicUser(existingUserOpt.get().getId(), email, authProvider));
         return response;
       }

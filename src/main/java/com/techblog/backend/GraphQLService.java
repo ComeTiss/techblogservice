@@ -3,7 +3,6 @@ package com.techblog.backend;
 import com.google.common.collect.ImmutableList;
 import com.techblog.backend.datafetchers.PostDataFetcher;
 import com.techblog.backend.datafetchers.PostVotesDataFetcher;
-import com.techblog.backend.datafetchers.UserDataFetcher;
 import com.techblog.backend.types.error.ServiceExceptionHandler;
 import graphql.GraphQL;
 import graphql.execution.AsyncSerialExecutionStrategy;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Service;
 public class GraphQLService {
 
   @Autowired private PostDataFetcher postDataFetcher;
-  @Autowired private UserDataFetcher userDataFetcher;
   @Autowired private PostVotesDataFetcher postVotesDataFetcher;
 
   @Getter private GraphQL graphQL;

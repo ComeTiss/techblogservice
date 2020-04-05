@@ -1,10 +1,4 @@
 
-# extend type Query {}
-
-extend type Mutation {
-    signup(request: SignUpRequest!) : AuthenticationResponse
-    login(request: LoginRequest!) : AuthenticationResponse
-}
 
 #### Data ####
 enum AuthProvider {
@@ -20,24 +14,6 @@ type User {
 
 #### Request ####
 
-input SignUpRequest {
-    email: String!
-    password: String!
-}
-
-input LoginRequest {
-    email: String!
-    password: String
-    authProvider: AuthProvider
-}
 
 #### Response ####
-
-type AuthenticationResponse {
-    error: String
-    user: User
-    token: String
-}
-
-
 
