@@ -1,10 +1,12 @@
 package com.techblog.backend.types.user;
 
-import com.techblog.backend.model.User;
+import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class AuthenticationResponse {
-  @Setter private User user;
-  @Setter private String token;
-  @Setter private String error;
+  private BasicUser user;
+  private String token;
+  private String error;
 }

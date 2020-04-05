@@ -1,5 +1,7 @@
-package com.techblog.backend.authentication;
+package com.techblog.backend.authentication.filters;
 
+import com.techblog.backend.authentication.SecurityConstants;
+import com.techblog.backend.authentication.utils.JwtUtils;
 import com.techblog.backend.model.User;
 import java.io.IOException;
 import javax.servlet.FilterChain;

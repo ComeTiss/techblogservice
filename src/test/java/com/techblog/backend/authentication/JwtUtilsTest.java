@@ -2,6 +2,8 @@ package com.techblog.backend.authentication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.techblog.backend.authentication.utils.JwtUtils;
+import com.techblog.backend.authentication.utils.PasswordUtils;
 import com.techblog.backend.model.User;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package com.techblog.backend.authentication;
+package com.techblog.backend.authentication.utils;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

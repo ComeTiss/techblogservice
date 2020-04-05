@@ -1,5 +1,6 @@
-package com.techblog.backend.authentication;
+package com.techblog.backend.authentication.utils;
 
+import com.techblog.backend.authentication.SecurityConstants;
 import com.techblog.backend.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -80,9 +80,6 @@ public class GraphQLService {
 
     dataFetchersMap.put("mutateVote", postVotesDataFetcher::mutateVote);
     dataFetchersMap.put("deleteVote", postVotesDataFetcher::deleteVote);
-
-    dataFetchersMap.put("signup", userDataFetcher::signUp);
-    dataFetchersMap.put("login", userDataFetcher::login);
     return dataFetchersMap;
   }
 }
