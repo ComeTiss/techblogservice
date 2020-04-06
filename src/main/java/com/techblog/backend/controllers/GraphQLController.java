@@ -13,15 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@RestController
 @CrossOrigin
-@RestController()
-@RequestMapping("/graphql")
 @Slf4j
 public class GraphQLController {
 
   @Autowired GraphQLService graphQLService;
 
-  @PostMapping
+  @PostMapping("/graphql")
   public BaseResponse handleRequest(@RequestBody BaseRequestData query) {
     try {
       ExecutionInput input =
